@@ -1,0 +1,9 @@
+body,
+html {
+  background: "red";
+  font-family: "Poppins", sans-serif;
+}
+
+.date-picker-wrapper label {
+  color: "red";
+}
