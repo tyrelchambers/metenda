@@ -55,7 +55,7 @@ model Category {
   userId            String
  
   taskId            String?
-  CategoriesOnTasks CategoriesOnTasks[]
+  tasks CategoriesOnTasks[]
 }
 
 model CategoriesOnTasks {

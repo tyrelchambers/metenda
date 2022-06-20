@@ -77,31 +77,30 @@ export async function updateTask({
   title,
   notes,
   userId,
-  categories,
 }: Pick<Task, "id" | "done" | "title" | "notes"> & {
   userId: User["id"];
-  categories?: string;
 }) {
-  if (categories) {
-    const categoryIds = categories.split(",");
-    for (let index = 0; index < categoryIds.length; index++) {
-      const element = categoryIds[index];
-
-      await prisma.categoriesOnTasks.create({
-        data: {
-          taskId: id,
-          categoryId: element,
-        },
-      });
-    }
-  }
-
   return prisma.task.updateMany({
     where: { id, userId },
     data: {
       done,
       title,
       notes,
+    },
+  });
+}
+
+export async function createCategoryOnTask({
+  taskId,
+  categoryId,
+}: {
+  taskId: Task["id"];
+  categoryId: Category["id"];
+}) {
+  return prisma.categoriesOnTasks.create({
+    data: {
+      categoryId,
+      taskId,
     },
   });
 }

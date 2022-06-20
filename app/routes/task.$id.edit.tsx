@@ -3,18 +3,20 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/server-runtime";
-import { Category, Task } from "@prisma/client";
-import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import {
+  createCategoryOnTask,
   deleteCategoryOnTask,
   getTaskById,
   updateTask,
 } from "~/models/task.server";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 
 import { Button } from "~/components/Button";
+import { Category } from "@prisma/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
+import Pill from "~/components/Pill";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
@@ -34,7 +36,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request);
   const formData = await request.formData();
-  const categories = formData.get("categories");
+  const categories = formData.get("categories") as string;
 
   const { title, notes, taskId } = await getCommonFormData(formData, [
     "title",
@@ -53,7 +55,20 @@ export const action: ActionFunction = async ({ request, params }) => {
       });
     }
     case "updateTask": {
-      await updateTask({ id: params.id, userId, title, notes, categories });
+      if (categories != "null") {
+        const categoryIds = categories.split(",");
+
+        for (let index = 0; index < categoryIds.length; index++) {
+          const element = categoryIds[index];
+
+          await createCategoryOnTask({
+            taskId: params.id,
+            categoryId: element,
+          });
+        }
+      }
+
+      await updateTask({ id: params.id, userId, title, notes });
       return redirect("/agenda");
     }
   }
@@ -92,6 +107,14 @@ const TaskEdit = () => {
       },
       { method: "post" }
     );
+  };
+
+  const filterExistingCategories = () => {
+    const filteredCategories = categories.filter(
+      (c) => !task.categories.some((tc) => tc.category.id === c.id)
+    );
+
+    return filteredCategories;
   };
 
   return (
@@ -150,24 +173,23 @@ const TaskEdit = () => {
             ))}
           </ul>
         </div>
-        <hr className="mt-4 mb-4" />
         <div className="flex flex-col">
           <Label htmlFor="categoryies">Add categories</Label>
           <ul className="mt-2 flex flex-wrap gap-2">
-            {categories.map((category: Category) => (
+            {filterExistingCategories().map((category: Category) => (
               <li key={category.id}>
-                <p
-                  className={`cursor-pointer rounded-full bg-gray-100 px-3 py-1 ${
-                    isActiveCategory(category) && "!bg-indigo-500 text-white"
-                  }`}
+                <Pill
+                  data={category.title}
+                  isActiveClass="!bg-indigo-500 !text-white"
+                  isActive={isActiveCategory(category)}
                   onClick={() => categoriesHandler(category)}
-                >
-                  {category.title}
-                </p>
+                />
               </li>
             ))}
           </ul>
         </div>
+        <hr className="mt-4 mb-4" />
+
         <div className="flex items-center gap-4">
           <Button variant="secondary">Discard</Button>
           <Button onClick={submitHandler}>Update task</Button>

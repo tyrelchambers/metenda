@@ -14,7 +14,7 @@ export const Button = ({
     return (
       <button
         type="button"
-        className={`h-[38px] rounded-lg border-2 border-gray-200 bg-white px-6 text-sm text-gray-800 transition-all hover:bg-gray-200 ${className}`}
+        className={`h-[38px] min-w-fit rounded-lg border-2 border-gray-200 bg-white px-6 text-sm text-gray-800 transition-all hover:bg-gray-200 ${className}`}
         {...prop}
       >
         {children}
@@ -24,7 +24,7 @@ export const Button = ({
   return (
     <button
       type="submit"
-      className={`h-[35px] rounded-lg bg-indigo-500 px-6 text-sm text-white transition-all hover:bg-indigo-600 ${className}`}
+      className={`h-[35px] min-w-fit rounded-lg bg-indigo-500 px-6 text-sm text-white transition-all hover:bg-indigo-600 ${className}`}
       {...prop}
     >
       {children}
