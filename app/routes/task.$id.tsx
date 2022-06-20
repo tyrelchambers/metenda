@@ -25,9 +25,11 @@ const ItemId = () => {
             <h1 className="text-3xl font-bold text-gray-800">{task.title}</h1>
             <Link to={`/task/${task.id}/edit`}>Edit</Link>
           </div>
-          <p className="mt-4 whitespace-pre-wrap text-gray-600">{task.notes}</p>
-
-          <ul className="flex flex-wrap gap-4">
+          <p className="mt-4 whitespace-pre-wrap font-thin text-gray-500">
+            {task.notes}
+          </p>
+          <hr className="mt-4 mb-4" />
+          <ul className="mt-6 flex flex-wrap gap-4">
             {task.categories.map((c) => (
               <li key={c.category.id}>
                 <Pill data={c.category.title} />
