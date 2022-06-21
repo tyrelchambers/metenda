@@ -1,5 +1,6 @@
 import type { CategoriesOnTasks, Category, Task, User } from "@prisma/client";
 
+import { isSameWeek } from "date-fns";
 import { prisma } from "~/db.server";
 
 export function getAllTasks({
@@ -10,21 +11,17 @@ export function getAllTasks({
 }: { limit?: number; after?: string; before?: string } & {
   userId: User["id"];
 }) {
+  console.log("getAllTasks", { userId, limit, after, before });
+
   return prisma.task.findMany({
     where: {
       userId,
-      AND: [
-        {
-          createdAt: {
-            gte: after || undefined,
-          },
-        },
-        {
-          createdAt: {
-            lte: before || undefined,
-          },
-        },
-      ],
+      fromDate: {
+        lt: before || undefined,
+      },
+      toDate: {
+        gt: after || undefined,
+      },
     },
     orderBy: { createdAt: "asc" },
   });
@@ -54,7 +51,7 @@ export function createTask({
           id: userId,
         },
       },
-      ...(categories && {
+      ...(categories !== "null" && {
         categories: {
           create: [
             ...categories.split(",").map((category) => ({

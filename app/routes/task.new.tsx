@@ -14,6 +14,7 @@ import Label from "~/components/Label";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
+import { addWeeks } from "date-fns";
 import { createTask } from "~/models/task.server";
 import { getAllCategories } from "~/models/category.server";
 import { getCommonFormData } from "~/utils";
@@ -47,7 +48,9 @@ export const action: ActionFunction = async ({ request }) => {
     title,
     notes,
     fromDate: new Date(fromDate).toISOString(),
-    toDate: toDate && new Date(toDate).toISOString(),
+    toDate: toDate
+      ? new Date(toDate).toISOString()
+      : addWeeks(fromDate, 1).toISOString(),
     willRepeatEveryWeek,
     categories,
   });
