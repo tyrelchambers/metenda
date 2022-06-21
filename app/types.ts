@@ -6,10 +6,13 @@ export interface TaskRepeatDetails {
 }
 
 export interface CommonFormData {
-  title: string;
+  title?: string;
   notes: string;
   fromDate: Date;
   toDate: Date;
   willRepeatEveryWeek: boolean;
   taskId: string;
+  name?: string;
+  color?: string;
+  textColor?: string;
 }

@@ -13,6 +13,7 @@ import { useFetcher, useLoaderData } from "@remix-run/react";
 
 import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
+import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
@@ -178,8 +179,8 @@ const TaskEdit = () => {
           <ul className="mt-2 flex flex-wrap gap-2">
             {filterExistingCategories().map((category: Category) => (
               <li key={category.id}>
-                <Pill
-                  data={category.title}
+                <CategoryPill
+                  data={category}
                   isActiveClass="!bg-indigo-500 !text-white"
                   isActive={isActiveCategory(category)}
                   onClick={() => categoriesHandler(category)}

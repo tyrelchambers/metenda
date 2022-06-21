@@ -7,6 +7,7 @@ import { format, isAfter, isBefore, isEqual, startOfDay } from "date-fns";
 import { Button } from "~/components/Button";
 import Calendar from "react-calendar";
 import { Category } from "@prisma/client";
+import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TaskList from "~/components/TaskList";
 import Wrapper from "~/layout/Wrapper";
@@ -173,11 +174,8 @@ const Agenda = () => {
                   </p>
                 )}
                 {categories.map((cat: Category) => (
-                  <li
-                    key={cat.id}
-                    className="w-fit rounded-full bg-gray-100 px-4 py-1"
-                  >
-                    <p className="text-gray-500">{cat.title}</p>
+                  <li key={cat.id}>
+                    <CategoryPill data={cat} />
                   </li>
                 ))}
               </ul>

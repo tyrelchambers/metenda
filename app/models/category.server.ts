@@ -1,17 +1,20 @@
 import { Category, User } from "@prisma/client";
 
-import { Task } from "vitest";
 import { prisma } from "~/db.server";
 
 export function createCategory({
   title,
   userId,
-}: Pick<Category, "title"> & {
+  color,
+  textColor,
+}: Pick<Category, "title" | "color" | "textColor"> & {
   userId: User["id"];
 }) {
   return prisma.category.create({
     data: {
       title,
+      color,
+      textColor,
       user: {
         connect: {
           id: userId,
