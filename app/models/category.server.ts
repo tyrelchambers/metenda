@@ -31,3 +31,41 @@ export function getAllCategories({ userId }: { userId: User["id"] }) {
     },
   });
 }
+
+export function getCategoryById({
+  userId,
+  id,
+}: {
+  userId: User["id"];
+  id: Category["id"];
+}) {
+  return prisma.category.findFirst({
+    where: {
+      id,
+      userId,
+    },
+  });
+}
+
+export function updateCategory({
+  title,
+  color,
+  textColor,
+  id,
+  userId,
+}: Pick<Category, "title" | "color" | "textColor"> & {
+  userId: User["id"];
+  id: Category["id"];
+}) {
+  return prisma.category.updateMany({
+    where: {
+      id,
+      userId,
+    },
+    data: {
+      title,
+      color,
+      textColor,
+    },
+  });
+}
