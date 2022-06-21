@@ -8,9 +8,14 @@ async function seed() {
   const email = "rachel@remix.run";
 
   // cleanup the existing database
-  await prisma.user.delete({ where: { email } }).catch(() => {
+  await prisma.user.deleteMany().catch(() => {
     // no worries if it doesn't exist yet
   });
+
+  await prisma.categoriesOnTasks.deleteMany();
+  await prisma.task.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.password.deleteMany();
 
   const hashedPassword = await bcrypt.hash("racheliscool", 10);
 
@@ -25,7 +30,7 @@ async function seed() {
     },
   });
 
-  for (let index = 0; index < 50; index++) {
+  for (let index = 0; index < 10; index++) {
     await prisma.task.create({
       data: {
         title: `My ${index} task`,
@@ -35,11 +40,13 @@ async function seed() {
     });
   }
 
-  for (let index = 0; index < 15; index++) {
+  for (let index = 0; index < 5; index++) {
     await prisma.category.create({
       data: {
         title: `My ${index} category`,
         userId: user.id,
+        color: faker.internet.color(),
+        textColor: faker.internet.color(),
       },
     });
   }

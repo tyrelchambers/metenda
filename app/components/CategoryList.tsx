@@ -7,13 +7,6 @@ import React from "react";
 const CategoryList = ({ category }) => {
   const fetcher = useFetcher();
 
-  const onChangeHandler = (checked) => {
-    fetcher.submit(
-      { id: category.id, done: checked, type: "toggleDone" },
-      { method: "post" }
-    );
-  };
-
   const deleteHandler = () => {
     fetcher.submit({ id: category.id, type: "delete" }, { method: "post" });
   };

@@ -1,10 +1,10 @@
 import DashNav from "./DashNav";
-import { Link } from "react-router-dom";
+import { Link } from "@remix-run/react";
 import React from "react";
 
 const DashHeader = () => {
   return (
-    <header className=" sticky top-4 h-screen w-full max-w-[300px] rounded-3xl bg-gray-800 p-4 shadow-lg">
+    <header className="sticky top-4 h-screen w-full max-w-[300px] rounded-3xl bg-gray-800 p-4 shadow-lg">
       <h2 className="text-xl tracking-wider text-gray-100">MetaClimb</h2>
       <nav className="flex flex-col">
         <Link
