@@ -3,6 +3,7 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/server-runtime";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import {
   createCategoryOnTask,
   deleteCategoryOnTask,
@@ -11,6 +12,7 @@ import {
 } from "~/models/task.server";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
 import CategoryPill from "~/components/CategoryPill";
@@ -18,6 +20,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
 import Pill from "~/components/Pill";
+import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
@@ -173,6 +176,47 @@ const TaskEdit = () => {
               </li>
             ))}
           </ul>
+        </div>
+        <p className="text-indigo-500">Repeat</p>
+        <label className="mb-2 text-sm text-gray-800">
+          <input
+            type="checkbox"
+            name="willRepeat"
+            checked={newTask.willRepeatEveryWeek}
+            onChange={(e) =>
+              setNewTask({
+                ...newTask,
+                willRepeatEveryWeek: e.target.checked,
+              })
+            }
+            className="mr-2"
+          />
+          Every week
+        </label>
+        <div className="grid grid-cols-2 gap-6">
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="From"
+              value={newTask.fromDate}
+              onChange={(newValue) => {
+                setNewTask({ ...newTask, fromDate: newValue?.toISOString() });
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+
+          {!newTask.willRepeatEveryWeek && (
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="To"
+                value={newTask.toDate}
+                onChange={(newValue) => {
+                  setNewTask({ ...newTask, toDate: newValue?.toISOString() });
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          )}
         </div>
         <div className="flex flex-col">
           <Label htmlFor="categoryies">Add categories</Label>

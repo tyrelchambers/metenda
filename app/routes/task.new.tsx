@@ -4,6 +4,7 @@ import {
   redirect,
 } from "@remix-run/server-runtime";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { addWeeks, endOfWeek, startOfWeek } from "date-fns";
 import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -14,7 +15,6 @@ import Label from "~/components/Label";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
-import { addWeeks } from "date-fns";
 import { createTask } from "~/models/task.server";
 import { getAllCategories } from "~/models/category.server";
 import { getCommonFormData } from "~/utils";
@@ -47,10 +47,10 @@ export const action: ActionFunction = async ({ request }) => {
     userId,
     title,
     notes,
-    fromDate: new Date(fromDate).toISOString(),
+    fromDate: startOfWeek(new Date(fromDate)).toISOString(),
     toDate: toDate
-      ? new Date(toDate).toISOString()
-      : addWeeks(fromDate, 1).toISOString(),
+      ? endOfWeek(new Date(toDate)).toISOString()
+      : endOfWeek(addWeeks(fromDate, 1)).toISOString(),
     willRepeatEveryWeek,
     categories,
   });
@@ -117,7 +117,7 @@ const NewItem = () => {
             />
           </div>
           <hr />
-          <p className=" text-indigo-500">Repeat</p>
+          <p className="text-indigo-500">Repeat</p>
           <label className="mb-2 text-sm text-gray-800">
             <input
               type="checkbox"

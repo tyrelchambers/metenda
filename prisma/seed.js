@@ -37,7 +37,6 @@ async function seed() {
         title: `My ${index} task`,
         notes: faker.lorem.paragraph(),
         userId: user.id,
-        toDate: addWeeks(new Date(Date.now()), 1),
       },
     });
   }

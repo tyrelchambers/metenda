@@ -33,7 +33,6 @@ model Task {
   notes               String
   fromDate            DateTime  @default(now())
   toDate              DateTime?
-  willRepeatEveryWeek Boolean   @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

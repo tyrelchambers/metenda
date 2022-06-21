@@ -16,12 +16,23 @@ export function getAllTasks({
   return prisma.task.findMany({
     where: {
       userId,
-      fromDate: {
-        lt: before || undefined,
-      },
-      toDate: {
-        gt: after || undefined,
-      },
+      OR: [
+        {
+          fromDate: {
+            lt: before || undefined,
+          },
+          toDate: {
+            gt: after || undefined,
+          },
+        },
+
+        {
+          fromDate: {
+            lt: before || undefined,
+          },
+          toDate: null,
+        },
+      ],
     },
     orderBy: { createdAt: "asc" },
   });
@@ -33,19 +44,17 @@ export function createTask({
   userId,
   fromDate,
   toDate,
-  willRepeatEveryWeek,
   categories,
-}: Pick<
-  Task,
-  "notes" | "title" | "fromDate" | "toDate" | "willRepeatEveryWeek"
-> & { userId: User["id"]; categories?: string }) {
+}: Pick<Task, "notes" | "title" | "fromDate" | "toDate"> & {
+  userId: User["id"];
+  categories?: string;
+}) {
   return prisma.task.create({
     data: {
       title,
       notes,
       fromDate,
       toDate,
-      willRepeatEveryWeek: Boolean(willRepeatEveryWeek),
       user: {
         connect: {
           id: userId,
