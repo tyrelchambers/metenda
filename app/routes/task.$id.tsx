@@ -4,7 +4,6 @@ import CategoryPill from "~/components/CategoryPill";
 import Link from "~/components/Link";
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import Main from "~/layout/Main";
-import Pill from "~/components/Pill";
 import React from "react";
 import type { Task } from "@prisma/client";
 import Wrapper from "~/layout/Wrapper";

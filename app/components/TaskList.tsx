@@ -1,8 +1,8 @@
 import { Link, useFetcher } from "@remix-run/react";
-import React, { useRef } from "react";
 import { faMinusCircle, faPencil } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
 import { Task } from "@prisma/client";
 
 const TaskList = ({ task }: Task) => {

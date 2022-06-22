@@ -16,7 +16,6 @@ import { Category } from "@prisma/client";
 import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TaskList from "~/components/TaskList";
-import TasksGraph from "~/components/TasksGraph";
 import Wrapper from "~/layout/Wrapper";
 import { currentDay } from "~/utils";
 import { getAllCategories } from "~/models/category.server";
@@ -71,7 +70,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 const Agenda = () => {
   const navigate = useNavigate();
-  const { tasks, categories, totalTasks, completedTasks } = useLoaderData();
+  const { tasks, categories } = useLoaderData();
   const { startOfWeek, endOfWeek, nextWeek, previousWeek } =
     useCurrentWeek(currentDay);
 
@@ -79,7 +78,7 @@ const Agenda = () => {
     navigate({
       search: `?startOfWeek=${startOfWeek.toISOString()}&endOfWeek=${endOfWeek.toISOString()}`,
     });
-  }, [startOfWeek, endOfWeek]);
+  }, [startOfWeek, endOfWeek, navigate]);
 
   const nextWeekHandler = () => {
     nextWeek();

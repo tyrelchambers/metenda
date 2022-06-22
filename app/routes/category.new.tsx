@@ -1,11 +1,6 @@
 import { ActionFunction, redirect } from "@remix-run/server-runtime";
 import React, { useState } from "react";
-import {
-  isDarkColor,
-  getCommonFormData,
-  getRandomColor,
-  isDarkColor,
-} from "~/utils";
+import { getCommonFormData, getRandomColor, isDarkColor } from "~/utils";
 
 import { Button } from "~/components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

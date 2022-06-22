@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
 const { faker } = require("@faker-js/faker");
-const { addWeeks } = require("date-fns");
 
 const prisma = new PrismaClient();
 

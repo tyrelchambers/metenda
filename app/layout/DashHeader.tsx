@@ -29,6 +29,7 @@ const DashHeader = () => {
         <button
           type="submit"
           className="flex items-center gap-6  text-gray-400 transition-all hover:text-white"
+          name="logout"
         >
           <FontAwesomeIcon
             icon={faArrowRightFromBracket}

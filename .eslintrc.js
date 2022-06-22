@@ -2,6 +2,9 @@
  * @type {import('@types/eslint').Linter.BaseConfig}
  */
 module.exports = {
+  rules: {
+    "@typescript-eslint/consistent-type-imports": "off",
+  },
   extends: [
     "@remix-run/eslint-config",
     "@remix-run/eslint-config/node",

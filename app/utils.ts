@@ -1,7 +1,6 @@
 import { endOfWeek, startOfWeek } from "date-fns";
 
 import { CommonFormData } from "./types";
-import { Task } from "@prisma/client";
 import type { User } from "~/models/user.server";
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";

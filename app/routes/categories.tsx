@@ -4,12 +4,9 @@ import {
   redirect,
 } from "@remix-run/server-runtime";
 import { deleteCategory, getAllCategories } from "~/models/category.server";
-import { faMinusCircle, faPencil } from "@fortawesome/free-solid-svg-icons";
 
 import type { Category } from "@prisma/client";
 import CategoryList from "~/components/CategoryList";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
 import Main from "~/layout/Main";
 import React from "react";
 import Wrapper from "~/layout/Wrapper";

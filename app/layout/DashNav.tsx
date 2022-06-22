@@ -1,17 +1,11 @@
 import {
-  FontAwesomeIcon,
-  FontAwesomeIconProps,
-} from "@fortawesome/react-fontawesome";
-import {
   faBoxesStacked,
-  faDiagramProject,
   faHome,
   faTasks,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { FontawesomeObject } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { NavLink } from "@remix-run/react";
-import React from "react";
 
 interface ILink {
   to: string;
