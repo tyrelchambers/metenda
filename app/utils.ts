@@ -112,3 +112,11 @@ export function isDarkColor(color) {
   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
   return brightness < 125;
 }
+
+export const arrayFromWeeks = (week: number) => {
+  const arr = [];
+  for (let index = 0; index < week; index++) {
+    arr.push(index + 1);
+  }
+  return arr;
+};

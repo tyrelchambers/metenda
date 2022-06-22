@@ -1,6 +1,12 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
-import { deleteTask, getAllTasks, updateTask } from "~/models/task.server";
+import {
+  deleteTask,
+  getAllTasks,
+  totalCompletedTasksCount,
+  totalTasksCount,
+  updateTask,
+} from "~/models/task.server";
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import { format, isAfter, isBefore, isEqual, startOfDay } from "date-fns";
 
@@ -10,6 +16,7 @@ import { Category } from "@prisma/client";
 import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TaskList from "~/components/TaskList";
+import TasksGraph from "~/components/TasksGraph";
 import Wrapper from "~/layout/Wrapper";
 import { currentDay } from "~/utils";
 import { getAllCategories } from "~/models/category.server";
@@ -22,6 +29,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
   const startOfWeek = url.searchParams.get("startOfWeek");
   const endOfWeek = url.searchParams.get("endOfWeek");
+  const totalTasks = await totalTasksCount({ userId });
+  const completedTasks = await totalCompletedTasksCount({
+    userId,
+    completed: true,
+  });
 
   const tasks = await getAllTasks({
     userId,
@@ -30,7 +42,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   });
 
   const categories = await getAllCategories({ userId });
-  return { tasks, categories };
+  return { tasks, categories, totalTasks, completedTasks };
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -59,7 +71,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 const Agenda = () => {
   const navigate = useNavigate();
-  const { tasks, categories } = useLoaderData();
+  const { tasks, categories, totalTasks, completedTasks } = useLoaderData();
   const { startOfWeek, endOfWeek, nextWeek, previousWeek } =
     useCurrentWeek(currentDay);
 
@@ -104,6 +116,7 @@ const Agenda = () => {
                 </Button>
               </div>
             </div>
+
             <div className="flex flex-col">
               <ul className=" h-[600px] w-full overflow-auto rounded-3xl bg-white p-6 shadow-lg">
                 {tasks.length === 0 && (

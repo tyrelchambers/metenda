@@ -153,3 +153,19 @@ export function deleteCategoryOnTask({
     where: { taskId, categoryId },
   });
 }
+
+export function totalTasksCount({ userId }: { userId: User["id"] }) {
+  return prisma.task.groupBy({
+    where: { userId },
+    by: ["fromDate", "toDate"],
+    _count: true,
+  });
+}
+
+export function totalCompletedTasksCount({ userId }: { userId: User["id"] }) {
+  return prisma.task.groupBy({
+    where: { userId, done: true },
+    by: ["fromDate", "toDate"],
+    _count: true,
+  });
+}
