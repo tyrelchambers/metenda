@@ -96,8 +96,8 @@ Prior to your first deployment, you'll need to do a few things:
 - Create two apps on Fly, one for staging and one for production:
 
   ```sh
-  fly create weekly-agenda-9db4
-  fly create weekly-agenda-9db4-staging
+  fly create metenda
+  fly create metenda-staging
   ```
 
 - Initialize Git.
@@ -117,14 +117,14 @@ Prior to your first deployment, you'll need to do a few things:
 - Add a `SESSION_SECRET` to your fly app secrets, to do this you can run the following commands:
 
   ```sh
-  fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app weekly-agenda-9db4
-  fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app weekly-agenda-9db4-staging
+  fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app metenda
+  fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app metenda-staging
   ```
 
   > **Note:** When creating the staging secret, you may get a warning from the Fly CLI that looks like this:
   >
   > ```
-  > WARN app flag 'weekly-agenda-9db4-staging' does not match app name in config file 'weekly-agenda-9db4'
+  > WARN app flag 'metenda-staging' does not match app name in config file 'metenda'
   > ```
   >
   > This simply means that the current directory contains a config that references the production app we created in the first step. Ignore this warning and proceed to create the secret.
@@ -134,11 +134,11 @@ Prior to your first deployment, you'll need to do a few things:
 - Create a database for both your staging and production environments. Run the following:
 
   ```sh
-  fly postgres create --name weekly-agenda-9db4-db
-  fly postgres attach --postgres-app weekly-agenda-9db4-db --app weekly-agenda-9db4
+  fly postgres create --name metenda-db
+  fly postgres attach --postgres-app metenda-db --app metenda
 
-  fly postgres create --name weekly-agenda-9db4-staging-db
-  fly postgres attach --postgres-app weekly-agenda-9db4-staging-db --app weekly-agenda-9db4-staging
+  fly postgres create --name metenda-staging-db
+  fly postgres attach --postgres-app metenda-staging-db --app metenda-staging
   ```
 
   > **Note:** You'll get the same warning for the same reason when attaching the staging database that you did in the `fly set secret` step above. No worries. Proceed!
