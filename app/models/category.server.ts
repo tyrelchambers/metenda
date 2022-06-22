@@ -69,3 +69,24 @@ export function updateCategory({
     },
   });
 }
+
+export async function deleteCategory({
+  id,
+  userId,
+}: {
+  id: Category["id"];
+  userId: User["id"];
+}) {
+  await prisma.categoriesOnTasks.deleteMany({
+    where: {
+      categoryId: id,
+    },
+  });
+
+  return prisma.category.deleteMany({
+    where: {
+      id,
+      userId,
+    },
+  });
+}

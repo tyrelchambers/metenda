@@ -8,7 +8,7 @@ const CategoryList = ({ category }) => {
   const fetcher = useFetcher();
 
   const deleteHandler = () => {
-    fetcher.submit({ id: category.id, type: "delete" }, { method: "post" });
+    fetcher.submit({ id: category.id }, { method: "delete" });
   };
   return (
     <li

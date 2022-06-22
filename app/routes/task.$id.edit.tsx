@@ -4,6 +4,7 @@ import {
   redirect,
 } from "@remix-run/server-runtime";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { addWeeks, endOfWeek, startOfWeek } from "date-fns";
 import {
   createCategoryOnTask,
   deleteCategoryOnTask,
@@ -19,7 +20,7 @@ import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
-import Pill from "~/components/Pill";
+import Main from "~/layout/Main";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
@@ -42,11 +43,10 @@ export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
   const categories = formData.get("categories") as string;
 
-  const { title, notes, taskId } = await getCommonFormData(formData, [
-    "title",
-    "notes",
-    "taskId",
-  ]);
+  const { title, notes, taskId, fromDate, toDate } = await getCommonFormData(
+    formData,
+    ["title", "notes", "taskId", "fromDate", "toDate"]
+  );
 
   const type = formData.get("type") as string;
   const categoryId = formData.get("categoryId") as string;
@@ -72,7 +72,16 @@ export const action: ActionFunction = async ({ request, params }) => {
         }
       }
 
-      await updateTask({ id: params.id, userId, title, notes });
+      await updateTask({
+        id: params.id,
+        userId,
+        title,
+        notes,
+        fromDate: startOfWeek(new Date(fromDate)).toISOString(),
+        toDate: toDate
+          ? endOfWeek(new Date(toDate)).toISOString()
+          : endOfWeek(addWeeks(fromDate, 1)).toISOString(),
+      });
       return redirect("/agenda");
     }
   }
@@ -123,7 +132,7 @@ const TaskEdit = () => {
 
   return (
     <Wrapper>
-      <main className="mt-8 flex h-fit w-full max-w-xl flex-col gap-4 rounded-3xl bg-white p-4 shadow-lg">
+      <Main>
         <h1 className="text-3xl font-bold text-gray-800">{task.title}</h1>
         <fetcher.Form method="patch" className="flex flex-col gap-4">
           <div className="flex flex-col">
@@ -155,6 +164,11 @@ const TaskEdit = () => {
         <div className="flex flex-col">
           <Label>Task categories</Label>
           <ul className="flex flex-col">
+            {newTask.categories.length === 0 && (
+              <p className="text-sm font-thin italic text-gray-500">
+                No categories on this task
+              </p>
+            )}
             {newTask.categories.map((c) => (
               <li
                 key={c.category.id}
@@ -220,6 +234,11 @@ const TaskEdit = () => {
         </div>
         <div className="flex flex-col">
           <Label htmlFor="categoryies">Add categories</Label>
+          {filterExistingCategories().length === 0 && (
+            <p className="text-sm italic text-gray-500">
+              There aren't any categories available to add to this task
+            </p>
+          )}
           <ul className="mt-2 flex flex-wrap gap-2">
             {filterExistingCategories().map((category: Category) => (
               <li key={category.id}>
@@ -239,7 +258,7 @@ const TaskEdit = () => {
           <Button variant="secondary">Discard</Button>
           <Button onClick={submitHandler}>Update task</Button>
         </div>
-      </main>
+      </Main>
     </Wrapper>
   );
 };

@@ -7,3 +7,8 @@ html {
 .date-picker-wrapper label {
   color: "red";
 }
+
+.wrapper {
+  height: 100vh;
+  overflow: auto;
+}

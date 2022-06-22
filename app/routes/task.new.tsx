@@ -32,14 +32,12 @@ export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
-  const { title, notes, fromDate, toDate, willRepeatEveryWeek } =
-    await getCommonFormData(formData, [
-      "title",
-      "notes",
-      "fromDate",
-      "toDate",
-      "willRepeatEveryWeek",
-    ]);
+  const { title, notes, fromDate, toDate } = await getCommonFormData(formData, [
+    "title",
+    "notes",
+    "fromDate",
+    "toDate",
+  ]);
 
   const categories = formData.get("categories");
 
@@ -51,7 +49,6 @@ export const action: ActionFunction = async ({ request }) => {
     toDate: toDate
       ? endOfWeek(new Date(toDate)).toISOString()
       : endOfWeek(addWeeks(fromDate, 1)).toISOString(),
-    willRepeatEveryWeek,
     categories,
   });
 

@@ -14,7 +14,6 @@ export const useTask = (task?: Task) => {
       notes: "",
       fromDate: currentDay,
       toDate: addWeeks(currentDay, 1),
-      willRepeatEveryWeek: true,
     }
   );
 

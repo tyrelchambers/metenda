@@ -1,6 +1,5 @@
 import type { CategoriesOnTasks, Category, Task, User } from "@prisma/client";
 
-import { isSameWeek } from "date-fns";
 import { prisma } from "~/db.server";
 
 export function getAllTasks({
@@ -11,31 +10,37 @@ export function getAllTasks({
 }: { limit?: number; after?: string; before?: string } & {
   userId: User["id"];
 }) {
-  console.log("getAllTasks", { userId, limit, after, before });
-
-  return prisma.task.findMany({
-    where: {
-      userId,
-      OR: [
-        {
-          fromDate: {
-            lt: before || undefined,
+  if (after || before) {
+    return prisma.task.findMany({
+      where: {
+        userId,
+        OR: [
+          {
+            fromDate: {
+              lt: before || undefined,
+            },
+            toDate: {
+              gt: after || undefined,
+            },
           },
-          toDate: {
-            gt: after || undefined,
+          {
+            fromDate: {
+              lt: before || undefined,
+            },
+            toDate: null,
           },
-        },
-
-        {
-          fromDate: {
-            lt: before || undefined,
-          },
-          toDate: null,
-        },
-      ],
-    },
-    orderBy: { createdAt: "asc" },
-  });
+        ],
+      },
+      orderBy: { createdAt: "asc" },
+    });
+  } else {
+    return prisma.task.findMany({
+      where: {
+        userId,
+      },
+      orderBy: { createdAt: "asc" },
+    });
+  }
 }
 
 export function createTask({
@@ -83,7 +88,9 @@ export async function updateTask({
   title,
   notes,
   userId,
-}: Pick<Task, "id" | "done" | "title" | "notes"> & {
+  fromDate,
+  toDate,
+}: Pick<Task, "id" | "done" | "title" | "notes" | "fromDate" | "toDate"> & {
   userId: User["id"];
 }) {
   return prisma.task.updateMany({
@@ -92,6 +99,8 @@ export async function updateTask({
       done,
       title,
       notes,
+      fromDate,
+      toDate,
     },
   });
 }

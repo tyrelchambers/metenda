@@ -1,5 +1,9 @@
+import { format, parseISO } from "date-fns";
+
+import CategoryPill from "~/components/CategoryPill";
 import Link from "~/components/Link";
 import type { LoaderFunction } from "@remix-run/server-runtime";
+import Main from "~/layout/Main";
 import Pill from "~/components/Pill";
 import React from "react";
 import type { Task } from "@prisma/client";
@@ -16,28 +20,53 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 const ItemId = () => {
   const task: Task = useLoaderData();
+  console.log(task);
 
   return (
     <Wrapper>
-      <main className="w-full">
-        <section className="max-w-2xl rounded-3xl bg-white p-6 shadow-lg">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-800">{task.title}</h1>
-            <Link to={`/task/${task.id}/edit`}>Edit</Link>
+      <Main>
+        <div className="flex flex-col">
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-gray-800">{task.title}</h1>
+
+              <Link to={`/task/${task.id}/edit`}>Edit</Link>
+            </div>
+            <div className=" mt-8 mb-4 flex items-center gap-6 rounded-2xl border-[1px] border-indigo-300 p-4">
+              <p className="text-sm font-bold text-indigo-600">
+                Task is for the week of:
+              </p>
+              <p className="text-gray-500">
+                {format(parseISO(task.fromDate), "MMMM do, yyyy")}
+              </p>
+              {task.toDate && (
+                <>
+                  <hr className="flex-1" />
+                  <p className="text-gray-500">
+                    {format(parseISO(task.toDate), "MMMM do, yyyy")}
+                  </p>
+                </>
+              )}
+            </div>
           </div>
-          <p className="mt-4 whitespace-pre-wrap font-thin text-gray-500">
-            {task.notes}
-          </p>
-          <hr className="mt-4 mb-4" />
+          {task.notes ? (
+            <p className="mt-4 whitespace-pre-wrap text-sm font-thin text-gray-500">
+              {task.notes}
+            </p>
+          ) : (
+            <p className="mt-4 whitespace-pre-wrap text-sm font-thin italic text-gray-500">
+              No notes on this task
+            </p>
+          )}
           <ul className="mt-6 flex flex-wrap gap-4">
             {task.categories.map((c) => (
               <li key={c.category.id}>
-                <Pill data={c.category.title} />
+                <CategoryPill data={c.category} />
               </li>
             ))}
           </ul>
-        </section>
-      </main>
+        </div>
+      </Main>
     </Wrapper>
   );
 };
