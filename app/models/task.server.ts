@@ -136,10 +136,16 @@ export function getTaskById({
   });
 }
 
-export function deleteTask({
+export async function deleteTask({
   id,
   userId,
 }: Pick<Task, "id"> & { userId: User["id"] }) {
+  await prisma.categoriesOnTasks.deleteMany({
+    where: {
+      taskId: id,
+    },
+  });
+
   return prisma.task.deleteMany({
     where: { id, userId },
   });

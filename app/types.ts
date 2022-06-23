@@ -15,4 +15,5 @@ export interface CommonFormData {
   name?: string;
   color?: string;
   textColor?: string;
+  done?: boolean;
 }

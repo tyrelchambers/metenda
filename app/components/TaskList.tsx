@@ -1,4 +1,4 @@
-import { Link, useFetcher } from "@remix-run/react";
+import { Form, Link, useFetcher } from "@remix-run/react";
 import { faMinusCircle, faPencil } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,13 +15,9 @@ const TaskList = ({ task }: { task: Task }) => {
     );
   };
 
-  const deleteHandler = () => {
-    fetcher.submit({ id: task.id, type: "delete" }, { method: "post" });
-  };
-
   return (
     <li className="flex items-center border-b-[1px] border-b-gray-200 py-4">
-      <fetcher.Form>
+      <Form action={`/task/${task.id}/edit`} method="patch">
         <input
           type="checkbox"
           name="done"
@@ -29,7 +25,7 @@ const TaskList = ({ task }: { task: Task }) => {
           onChange={(e) => onChangeHandler(e.currentTarget.checked)}
           defaultChecked={task.done}
         />
-      </fetcher.Form>
+      </Form>
 
       <Link
         to={`/task/${task.id}`}
@@ -48,15 +44,16 @@ const TaskList = ({ task }: { task: Task }) => {
             style={{ width: "16px" }}
           />
         </Link>
-        <fetcher.Form method="delete">
-          <button onClick={deleteHandler}>
+        <Form method="delete" action={`/task/${task.id}/delete`}>
+          <button type="submit">
             <FontAwesomeIcon
               icon={faMinusCircle}
               className="text-gray-500 transition-all hover:text-red-500"
               style={{ width: "16px" }}
             />
+            <input type="hidden" name="id" value={task.id} />
           </button>
-        </fetcher.Form>
+        </Form>
       </div>
     </li>
   );

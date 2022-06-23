@@ -43,10 +43,15 @@ export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
   const categories = formData.get("categories") as string;
 
-  const { title, notes, taskId, fromDate, toDate } = await getCommonFormData(
-    formData,
-    ["title", "notes", "taskId", "fromDate", "toDate"]
-  );
+  const { title, notes, taskId, fromDate, toDate, done } =
+    await getCommonFormData(formData, [
+      "title",
+      "notes",
+      "taskId",
+      "fromDate",
+      "toDate",
+      "done",
+    ]);
 
   const type = formData.get("type") as string;
   const categoryId = formData.get("categoryId") as string;
@@ -77,6 +82,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         userId,
         title,
         notes,
+        done,
         fromDate: startOfWeek(new Date(fromDate)).toISOString(),
         toDate: toDate
           ? endOfWeek(new Date(toDate)).toISOString()

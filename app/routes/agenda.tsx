@@ -57,12 +57,6 @@ export const action: ActionFunction = async ({ request }) => {
 
       return await updateTask({ userId, id: taskId, done: done === "true" });
     }
-
-    case "delete": {
-      const taskId = formData.get("id");
-
-      return await deleteTask({ userId, id: taskId });
-    }
   }
 
   return null;
