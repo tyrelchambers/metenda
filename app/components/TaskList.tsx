@@ -5,12 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Task } from "@prisma/client";
 
-const TaskList = ({ task }: Task) => {
+const TaskList = ({ task }: { task: Task }) => {
   const fetcher = useFetcher();
 
-  const onChangeHandler = (checked) => {
+  const onChangeHandler = (checked: boolean) => {
     fetcher.submit(
-      { id: task.id, done: checked, type: "toggleDone" },
+      { id: task.id, done: String(checked), type: "toggleDone" },
       { method: "post" }
     );
   };

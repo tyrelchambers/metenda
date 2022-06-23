@@ -90,7 +90,7 @@ export async function updateTask({
   userId,
   fromDate,
   toDate,
-}: Pick<Task, "id" | "done" | "title" | "notes" | "fromDate" | "toDate"> & {
+}: Partial<Task> & {
   userId: User["id"];
 }) {
   return prisma.task.updateMany({
