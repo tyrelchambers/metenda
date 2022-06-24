@@ -5,7 +5,6 @@ import {
 } from "@remix-run/server-runtime";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
-import { addWeeks, endOfWeek, startOfWeek } from "date-fns";
 import {
   createCategoryOnTask,
   deleteCategoryOnTask,

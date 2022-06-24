@@ -6,10 +6,11 @@ import {
 import { Form, useLoaderData, useNavigate } from "@remix-run/react";
 import React, { useState } from "react";
 import { getCategoryById, updateCategory } from "~/models/category.server";
-import { getCommonFormData, getRandomColor, isDarkColor } from "~/utils";
+import { getCommonFormData, getRandomColor } from "~/utils";
 
 import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
+import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
@@ -100,16 +101,12 @@ const CategoryEdit = () => {
 
           <div className="flex flex-col">
             <Label>Preview</Label>
-            <p
-              className={`w-fit rounded-full bg-gray-100 px-4 py-1 text-sm`}
-              style={{
-                border: `1.5px solid ${color}`,
-                backgroundColor: `${color}33`,
-                color: color,
+            <CategoryPill
+              data={{
+                title: category.title || "category preview",
+                color: category.color,
               }}
-            >
-              category preview
-            </p>
+            />
           </div>
 
           <hr className="mt-4 mb-4" />

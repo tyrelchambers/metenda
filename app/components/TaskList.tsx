@@ -1,21 +1,13 @@
-import { Category, Task } from "@prisma/client";
 import CategoryPill, { CategoryPillSize } from "./CategoryPill";
-import { Form, Link, useFetcher } from "@remix-run/react";
-import {
-  faFlag,
-  faPencil,
-  faTimes,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { Link, useFetcher } from "@remix-run/react";
 import { format, parseISO } from "date-fns";
 
-import CategoryList from "./CategoryList";
 import CheckBox from "./CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Pill from "./Pill";
-import React from "react";
+import { Task } from "@prisma/client";
 import TaskListItemActions from "./TaskListItemActions";
 import TaskStatus from "./TaskStatus";
+import { faFlag } from "@fortawesome/free-solid-svg-icons";
 import { taskStatus } from "~/utils";
 
 const TaskList = ({ task }: { task: Task }) => {

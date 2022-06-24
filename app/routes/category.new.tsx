@@ -1,8 +1,9 @@
 import { ActionFunction, redirect } from "@remix-run/server-runtime";
 import React, { useState } from "react";
-import { getCommonFormData, getRandomColor, isDarkColor } from "~/utils";
+import { getCommonFormData, getRandomColor } from "~/utils";
 
 import { Button } from "~/components/Button";
+import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Form } from "@remix-run/react";
 import Input from "~/components/Input";
@@ -50,33 +51,32 @@ const Category = () => {
 
           <div className="flex flex-col">
             <Label htmlFor="color">Color</Label>
-            <div className="flex items-center gap-2">
+            <button
+              type="buttonx"
+              className="flex items-center gap-2"
+              onClick={handleColorChange}
+            >
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500">
                 <FontAwesomeIcon
                   icon={faDice}
                   name="color"
                   className="w-6 text-white"
-                  onClick={handleColorChange}
                 />
               </span>
               <Input value={color} />
-            </div>
+            </button>
           </div>
 
           <input type="text" hidden value={color} name="color" />
 
           <div className="flex flex-col">
             <Label>Preview</Label>
-            <p
-              className={`w-fit rounded-full bg-gray-100 px-4 py-1 text-sm`}
-              style={{
-                border: `1.5px solid ${color}`,
-                backgroundColor: `${color}33`,
-                color: color,
+            <CategoryPill
+              data={{
+                title: "category preview",
+                color,
               }}
-            >
-              category preview
-            </p>
+            />
           </div>
           <hr className="mt-4 mb-4" />
           <Button>Save category</Button>
