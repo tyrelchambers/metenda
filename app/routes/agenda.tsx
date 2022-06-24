@@ -1,5 +1,6 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { currentDay, getCommonFormData } from "~/utils";
 import {
   deleteTask,
   getAllTasks,
@@ -17,7 +18,6 @@ import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TaskList from "~/components/TaskList";
 import Wrapper from "~/layout/Wrapper";
-import { currentDay } from "~/utils";
 import { getAllCategories } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
 import { useCurrentWeek } from "~/hooks/useCurrentWeek";
@@ -49,13 +49,19 @@ export const action: ActionFunction = async ({ request }) => {
 
   const formData = await request.formData();
   const type = formData.get("type");
+  const { id, done, incomplete } = await getCommonFormData(formData, [
+    "id",
+    "done",
+    "incomplete",
+  ]);
 
   switch (type) {
     case "toggleDone": {
-      const taskId = formData.get("id");
-      const done = formData.get("done");
+      return await updateTask({ userId, id, done });
+    }
 
-      return await updateTask({ userId, id: taskId, done: done === "true" });
+    case "markAsIncomplete": {
+      return await updateTask({ userId, id, incomplete });
     }
   }
 

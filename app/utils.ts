@@ -123,10 +123,8 @@ export const arrayFromWeeks = (week: number) => {
 
 export const taskStatus = (task: Task): TaskStatuses => {
   if (task.done) return TaskStatuses.DONE;
-  if (task.fromDate && task.toDate) {
-    if (task.fromDate < currentDay && task.toDate > currentDay) {
-      return TaskStatuses.IN_PROGRESS;
-    }
+  if (task.incomplete || (task.toDate && task.toDate > currentDay)) {
+    return TaskStatuses.INCOMPLETE;
   }
-  return TaskStatuses.INCOMPLETE;
+  return TaskStatuses.IN_PROGRESS;
 };

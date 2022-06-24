@@ -90,6 +90,7 @@ export async function updateTask({
   userId,
   fromDate,
   toDate,
+  incomplete,
 }: Partial<Task> & {
   userId: User["id"];
 }) {
@@ -101,6 +102,7 @@ export async function updateTask({
       notes,
       fromDate,
       toDate,
+      incomplete: Boolean(incomplete),
     },
   });
 }

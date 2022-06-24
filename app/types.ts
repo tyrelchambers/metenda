@@ -1,3 +1,5 @@
+import { Task } from "@prisma/client";
+
 export interface TaskRepeatDetails {
   fromDate: Date;
   toDate: Date;
@@ -5,17 +7,8 @@ export interface TaskRepeatDetails {
   willRepeatEveryWeek: boolean;
 }
 
-export interface CommonFormData {
-  title?: string;
-  notes: string;
-  fromDate: Date;
-  toDate: Date;
+export interface CommonFormData extends Partial<Task> {
   willRepeatEveryWeek: boolean;
-  taskId: string;
-  name?: string;
-  color?: string;
-  textColor?: string;
-  done?: boolean;
 }
 
 export type TaskStatusProps = TaskStatuses;

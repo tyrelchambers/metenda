@@ -1,5 +1,5 @@
 import { Form, Link, useFetcher } from "@remix-run/react";
-import { faMinusCircle, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import CheckBox from "./CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,16 +18,21 @@ const TaskList = ({ task }: { task: Task }) => {
     );
   };
 
+  const markAsIncomplete = (incomplete: boolean) => {
+    fetcher.submit(
+      { id: task.id, incomplete: String(incomplete), type: "markAsIncomplete" },
+      { method: "post" }
+    );
+  };
+
   return (
-    <li className="flex items-center border-b-[1px] border-b-gray-200 py-4">
-      <Form action={`/task/${task.id}/edit`} method="patch">
-        <CheckBox
-          name="done"
-          defaultChecked={task.done}
-          onChange={(e) => onChangeHandler(e.currentTarget.checked)}
-          checked={task.done}
-        />
-      </Form>
+    <li className="flex  items-center border-b-[1px] border-b-gray-200 py-4">
+      <CheckBox
+        name="done"
+        defaultChecked={task.done}
+        onChange={(e) => onChangeHandler(e.currentTarget.checked)}
+        checked={task.done}
+      />
 
       <div className="flex flex-1 items-center justify-start gap-4">
         <Link
@@ -44,19 +49,27 @@ const TaskList = ({ task }: { task: Task }) => {
       </div>
 
       <div className="flex items-center gap-4">
+        <FontAwesomeIcon
+          icon={faTimes}
+          className="text-red-300"
+          title="Mark as incomplete"
+          style={{ width: "13px" }}
+          onClick={() => markAsIncomplete(!task.incomplete)}
+        />
+        <span className="h-4 w-[1px] bg-gray-400"></span>
         <Link to={`/task/${task.id}/edit`}>
           <FontAwesomeIcon
             icon={faPencil}
             className="text-gray-500 transition-all hover:text-green-500"
-            style={{ width: "16px" }}
+            style={{ width: "13px" }}
           />
         </Link>
         <Form method="delete" action={`/task/${task.id}/delete`}>
           <button type="submit">
             <FontAwesomeIcon
-              icon={faMinusCircle}
+              icon={faTrash}
               className="text-gray-500 transition-all hover:text-red-500"
-              style={{ width: "16px" }}
+              style={{ width: "13px" }}
             />
             <input type="hidden" name="id" value={task.id} />
           </button>

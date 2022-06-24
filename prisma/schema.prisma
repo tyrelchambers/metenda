@@ -33,6 +33,7 @@ model Task {
   notes               String
   fromDate            DateTime  @default(now())
   toDate              DateTime?
+  incomplete          Boolean?  
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

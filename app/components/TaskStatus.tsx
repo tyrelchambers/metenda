@@ -8,6 +8,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
+const pillClasses = "flex items-center rounded-full py-1 px-3 text-xs";
+
 const TaskStatus = ({
   status = TaskStatuses.IN_PROGRESS,
 }: {
@@ -15,7 +17,7 @@ const TaskStatus = ({
 }) => {
   if (status === TaskStatuses.DONE) {
     return (
-      <span className="flex items-center rounded-full bg-green-100 py-1 px-3 text-xs text-green-500">
+      <span className={`bg-green-100  text-green-500 ${pillClasses}`}>
         <FontAwesomeIcon
           icon={faCheckCircle}
           style={{ width: "10px" }}
@@ -27,7 +29,7 @@ const TaskStatus = ({
   }
   if (status === TaskStatuses.INCOMPLETE) {
     return (
-      <span className="flex items-center rounded-full bg-red-100 py-1 px-3 text-xs text-red-500">
+      <span className={`bg-red-100  text-red-500 ${pillClasses}`}>
         <FontAwesomeIcon
           icon={faTimes}
           style={{ width: "7px" }}
@@ -39,7 +41,7 @@ const TaskStatus = ({
   }
 
   return (
-    <span className="flex items-center text-gray-500">
+    <span className={`bg-gray-100 text-gray-500 ${pillClasses}`}>
       <FontAwesomeIcon
         icon={faClock}
         style={{ width: "10px" }}
