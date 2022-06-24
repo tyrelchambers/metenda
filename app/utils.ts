@@ -1,6 +1,7 @@
+import { CommonFormData, TaskStatuses } from "./types";
 import { endOfWeek, startOfWeek } from "date-fns";
 
-import { CommonFormData } from "./types";
+import { Task } from "@prisma/client";
 import type { User } from "~/models/user.server";
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
@@ -118,4 +119,14 @@ export const arrayFromWeeks = (week: number) => {
     arr.push(index + 1);
   }
   return arr;
+};
+
+export const taskStatus = (task: Task): TaskStatuses => {
+  if (task.done) return TaskStatuses.DONE;
+  if (task.fromDate && task.toDate) {
+    if (task.fromDate < currentDay && task.toDate > currentDay) {
+      return TaskStatuses.IN_PROGRESS;
+    }
+  }
+  return TaskStatuses.INCOMPLETE;
 };

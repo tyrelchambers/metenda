@@ -96,7 +96,7 @@ export async function updateTask({
   return prisma.task.updateMany({
     where: { id, userId },
     data: {
-      done,
+      done: Boolean(done),
       title,
       notes,
       fromDate,

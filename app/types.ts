@@ -17,3 +17,11 @@ export interface CommonFormData {
   textColor?: string;
   done?: boolean;
 }
+
+export type TaskStatusProps = TaskStatuses;
+
+export enum TaskStatuses {
+  DONE = "done",
+  IN_PROGRESS = "inProgress",
+  INCOMPLETE = "incomplete",
+}

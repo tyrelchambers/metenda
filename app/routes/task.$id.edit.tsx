@@ -4,6 +4,7 @@ import {
   redirect,
 } from "@remix-run/server-runtime";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import { addWeeks, endOfWeek, startOfWeek } from "date-fns";
 import {
   createCategoryOnTask,
@@ -11,7 +12,6 @@ import {
   getTaskById,
   updateTask,
 } from "~/models/task.server";
-import { useFetcher, useLoaderData } from "@remix-run/react";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button } from "~/components/Button";
@@ -76,21 +76,23 @@ export const action: ActionFunction = async ({ request, params }) => {
           });
         }
       }
-
-      await updateTask({
-        id: params.id,
-        userId,
-        title,
-        notes,
-        done,
-        fromDate: startOfWeek(new Date(fromDate)).toISOString(),
-        toDate: toDate
-          ? endOfWeek(new Date(toDate)).toISOString()
-          : endOfWeek(addWeeks(fromDate, 1)).toISOString(),
-      });
-      return redirect("/agenda");
     }
   }
+
+  await updateTask({
+    id: params.id,
+    userId,
+    title,
+    notes,
+    done,
+    fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
+    toDate:
+      toDate && fromDate
+        ? endOfWeek(new Date(toDate)).toISOString()
+        : undefined,
+  });
+
+  return redirect("/agenda");
 };
 
 const TaskEdit = () => {
@@ -140,7 +142,7 @@ const TaskEdit = () => {
     <Wrapper>
       <Main>
         <h1 className="text-3xl font-bold text-gray-800">{task.title}</h1>
-        <fetcher.Form method="patch" className="flex flex-col gap-4">
+        <Form method="patch" className="flex flex-col gap-4">
           <div className="flex flex-col">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -165,7 +167,7 @@ const TaskEdit = () => {
               }
             />
           </div>
-        </fetcher.Form>
+        </Form>
 
         <div className="flex flex-col">
           <Label>Task categories</Label>

@@ -1,9 +1,12 @@
 import { Form, Link, useFetcher } from "@remix-run/react";
 import { faMinusCircle, faPencil } from "@fortawesome/free-solid-svg-icons";
 
+import CheckBox from "./CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Task } from "@prisma/client";
+import TaskStatus from "./TaskStatus";
+import { taskStatus } from "~/utils";
 
 const TaskList = ({ task }: { task: Task }) => {
   const fetcher = useFetcher();
@@ -18,23 +21,27 @@ const TaskList = ({ task }: { task: Task }) => {
   return (
     <li className="flex items-center border-b-[1px] border-b-gray-200 py-4">
       <Form action={`/task/${task.id}/edit`} method="patch">
-        <input
-          type="checkbox"
+        <CheckBox
           name="done"
-          className="mr-4"
-          onChange={(e) => onChangeHandler(e.currentTarget.checked)}
           defaultChecked={task.done}
+          onChange={(e) => onChangeHandler(e.currentTarget.checked)}
+          checked={task.done}
         />
       </Form>
 
-      <Link
-        to={`/task/${task.id}`}
-        className={`w-full flex-1  ${
-          task.done ? "font-normal text-gray-500 line-through" : "text-gray-800"
-        }`}
-      >
-        {task.title}
-      </Link>
+      <div className="flex flex-1 items-center justify-start gap-4">
+        <Link
+          to={`/task/${task.id}`}
+          className={`  ${
+            task.done
+              ? "font-normal text-gray-500 line-through"
+              : "text-gray-800"
+          }`}
+        >
+          {task.title}
+        </Link>
+        <TaskStatus status={taskStatus(task)} />
+      </div>
 
       <div className="flex items-center gap-4">
         <Link to={`/task/${task.id}/edit`}>
