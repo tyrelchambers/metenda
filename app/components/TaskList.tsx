@@ -77,9 +77,6 @@ const TaskList = ({ task }: { task: Task }) => {
               </li>
             ))}
         </ul>
-        {/* <p className=" mt-2 rounded-lg bg-gray-100 p-2 text-sm font-thin text-gray-500">
-          {task.notes}
-        </p> */}
       </div>
 
       <TaskListItemActions
