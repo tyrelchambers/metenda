@@ -57,11 +57,15 @@ export const action: ActionFunction = async ({ request }) => {
 
   switch (type) {
     case "toggleDone": {
-      return await updateTask({ userId, id, done });
+      return await updateTask({ userId, id, done: done === "true" });
     }
 
     case "markAsIncomplete": {
-      return await updateTask({ userId, id, incomplete });
+      return await updateTask({
+        userId,
+        id,
+        incomplete: incomplete === "true",
+      });
     }
   }
 

@@ -29,8 +29,7 @@ const TaskList = ({ task }: { task: Task }) => {
     <li className="flex  items-center border-b-[1px] border-b-gray-200 py-4">
       <CheckBox
         name="done"
-        defaultChecked={task.done}
-        onChange={(e) => onChangeHandler(e.currentTarget.checked)}
+        changeHandler={() => onChangeHandler(!task.done)}
         checked={task.done}
       />
 

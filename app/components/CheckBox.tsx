@@ -4,27 +4,19 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 interface CheckBoxProps {
   name: string;
-  defaultChecked?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  checked?: boolean;
+  changeHandler: () => void;
+  checked: boolean | null;
 }
 
-const CheckBox = ({
-  name,
-  defaultChecked,
-  onChange,
-  checked,
-  ...rest
-}: CheckBoxProps) => {
+const CheckBox = ({ name, changeHandler, checked, ...rest }: CheckBoxProps) => {
   return (
-    <label>
+    <label htmlFor={name} onClick={changeHandler}>
       <input
         type="checkbox"
         name={name}
         hidden
         className="mr-4"
-        defaultChecked={defaultChecked}
-        onChange={onChange}
+        checked={checked}
         {...rest}
       />
       <div
