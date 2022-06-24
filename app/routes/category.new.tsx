@@ -16,27 +16,20 @@ export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
-  const { title, color, textColor } = getCommonFormData(formData, [
-    "title",
-    "color",
-    "textColor",
-  ]);
+  const { title, color } = getCommonFormData(formData, ["title", "color"]);
 
-  await createCategory({ userId, title, color, textColor });
+  await createCategory({ userId, title, color });
 
   return redirect("/agenda");
 };
 
 const Category = () => {
-  const [color, setColor] = useState("#e5e7eb");
-  const [textColor, setTextColor] = useState("#000000");
+  const [color, setColor] = useState("#8E4AD0");
 
   const handleColorChange = () => {
     const color = getRandomColor();
-    const textColor = isDarkColor(color) ? "#ffffff" : "#000000";
 
     setColor(color);
-    setTextColor(textColor);
   };
 
   return (
@@ -71,13 +64,16 @@ const Category = () => {
           </div>
 
           <input type="text" hidden value={color} name="color" />
-          <input type="text" hidden value={textColor} name="textColor" />
 
           <div className="flex flex-col">
             <Label>Preview</Label>
             <p
               className={`w-fit rounded-full bg-gray-100 px-4 py-1 text-sm`}
-              style={{ backgroundColor: color, color: textColor }}
+              style={{
+                border: `1.5px solid ${color}`,
+                backgroundColor: `${color}33`,
+                color: color,
+              }}
             >
               category preview
             </p>

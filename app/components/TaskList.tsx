@@ -1,10 +1,20 @@
+import { Category, Task } from "@prisma/client";
+import CategoryPill, { CategoryPillSize } from "./CategoryPill";
 import { Form, Link, useFetcher } from "@remix-run/react";
-import { faPencil, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFlag,
+  faPencil,
+  faTimes,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import { format, parseISO } from "date-fns";
 
+import CategoryList from "./CategoryList";
 import CheckBox from "./CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Pill from "./Pill";
 import React from "react";
-import { Task } from "@prisma/client";
+import TaskListItemActions from "./TaskListItemActions";
 import TaskStatus from "./TaskStatus";
 import { taskStatus } from "~/utils";
 
@@ -26,54 +36,56 @@ const TaskList = ({ task }: { task: Task }) => {
   };
 
   return (
-    <li className="flex  items-center border-b-[1px] border-b-gray-200 py-4">
+    <li className="flex  items-start gap-2 border-b-[1px] border-b-gray-200 py-4">
       <CheckBox
         name="done"
         changeHandler={() => onChangeHandler(!task.done)}
         checked={task.done}
       />
 
-      <div className="flex flex-1 items-center justify-start gap-4">
-        <Link
-          to={`/task/${task.id}`}
-          className={`  ${
-            task.done
-              ? "font-normal text-gray-500 line-through"
-              : "text-gray-800"
-          }`}
-        >
-          {task.title}
-        </Link>
-        <TaskStatus status={taskStatus(task)} />
+      <div className="flex flex-1 flex-col ">
+        <div className="flex  items-center justify-start gap-4">
+          <Link
+            to={`/task/${task.id}`}
+            className={`  ${
+              task.done
+                ? "font-medium text-gray-500 line-through"
+                : "font-medium text-gray-800"
+            }`}
+          >
+            {task.title}
+          </Link>
+          <TaskStatus status={taskStatus(task)} />
+        </div>
+        <div className="flex rounded-lg py-2">
+          <span className="flex gap-2">
+            <FontAwesomeIcon
+              icon={faFlag}
+              style={{ width: "10px" }}
+              className="text-gray-400"
+            />
+            <p className="text-xs text-gray-400">
+              {format(parseISO(task.fromDate), "MMMM do, yyyy")}
+            </p>
+          </span>
+        </div>
+        <ul className="flex gap-2">
+          {task.categories.length > 0 &&
+            task.categories.map((c) => (
+              <li key={c.id}>
+                <CategoryPill data={c.category} size={CategoryPillSize.SMALL} />
+              </li>
+            ))}
+        </ul>
+        {/* <p className=" mt-2 rounded-lg bg-gray-100 p-2 text-sm font-thin text-gray-500">
+          {task.notes}
+        </p> */}
       </div>
 
-      <div className="flex items-center gap-4">
-        <FontAwesomeIcon
-          icon={faTimes}
-          className="text-red-300"
-          title="Mark as incomplete"
-          style={{ width: "13px" }}
-          onClick={() => markAsIncomplete(!task.incomplete)}
-        />
-        <span className="h-4 w-[1px] bg-gray-400"></span>
-        <Link to={`/task/${task.id}/edit`}>
-          <FontAwesomeIcon
-            icon={faPencil}
-            className="text-gray-500 transition-all hover:text-green-500"
-            style={{ width: "13px" }}
-          />
-        </Link>
-        <Form method="delete" action={`/task/${task.id}/delete`}>
-          <button type="submit">
-            <FontAwesomeIcon
-              icon={faTrash}
-              className="text-gray-500 transition-all hover:text-red-500"
-              style={{ width: "13px" }}
-            />
-            <input type="hidden" name="id" value={task.id} />
-          </button>
-        </Form>
-      </div>
+      <TaskListItemActions
+        task={task}
+        markAsIncomplete={() => markAsIncomplete(!task.incomplete)}
+      />
     </li>
   );
 };

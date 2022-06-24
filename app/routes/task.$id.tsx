@@ -19,7 +19,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 const ItemId = () => {
   const task: Task = useLoaderData();
-  console.log(task);
 
   return (
     <Wrapper>

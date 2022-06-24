@@ -7,7 +7,7 @@ import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 const DashHeader = () => {
   return (
-    <header className="sticky top-4 flex h-full w-full max-w-[300px] flex-col justify-between rounded-3xl bg-gray-800 p-6 shadow-lg">
+    <header className="sticky top-0 flex h-full w-full max-w-[300px] flex-col justify-between rounded-3xl bg-gray-800 p-6 shadow-lg">
       <nav className="flex flex-col">
         <h2 className="text-xl tracking-wider text-gray-100">Metenda</h2>
         <Link

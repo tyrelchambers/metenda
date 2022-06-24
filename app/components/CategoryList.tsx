@@ -1,15 +1,11 @@
-import { Link, useFetcher } from "@remix-run/react";
+import { Form, Link, useFetcher } from "@remix-run/react";
 import { faMinusCircle, faPencil } from "@fortawesome/free-solid-svg-icons";
 
+import { Category } from "@prisma/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
-const CategoryList = ({ category }) => {
-  const fetcher = useFetcher();
-
-  const deleteHandler = () => {
-    fetcher.submit({ id: category.id }, { method: "delete" });
-  };
+const CategoryList = ({ category }: { category: Category }) => {
   return (
     <li
       key={category.id}
@@ -23,14 +19,15 @@ const CategoryList = ({ category }) => {
             className="text-gray-500 transition-all hover:text-green-500"
           />
         </Link>
-        <fetcher.Form method="delete">
-          <button onClick={deleteHandler}>
+        <Form method="delete" action={`/category/${category.id}/delete`}>
+          <button type="submit">
             <FontAwesomeIcon
               icon={faMinusCircle}
               className="text-gray-500 transition-all hover:text-red-500"
             />
           </button>
-        </fetcher.Form>
+          <input type="text" hidden name="id" value={category.id} />
+        </Form>
       </div>
     </li>
   );

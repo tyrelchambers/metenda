@@ -10,6 +10,7 @@ export function getAllTasks({
 }: { limit?: number; after?: string; before?: string } & {
   userId: User["id"];
 }) {
+  // used to return specific tasks within a timeframe
   if (after || before) {
     return prisma.task.findMany({
       where: {
@@ -32,13 +33,28 @@ export function getAllTasks({
         ],
       },
       orderBy: { createdAt: "asc" },
+      include: {
+        categories: {
+          select: {
+            category: true,
+          },
+        },
+      },
     });
   } else {
+    // returns all tasks used on tasks.tsx
     return prisma.task.findMany({
       where: {
         userId,
       },
       orderBy: { createdAt: "asc" },
+      include: {
+        categories: {
+          select: {
+            category: true,
+          },
+        },
+      },
     });
   }
 }

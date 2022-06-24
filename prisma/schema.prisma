@@ -48,7 +48,6 @@ model Category {
   id    String @id @default(cuid())
   title String
   color String @default("#ffffff")
-  textColor String @default("#000000")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -94,7 +94,7 @@ const Agenda = () => {
 
   return (
     <Wrapper>
-      <main className="w-full">
+      <main className=" w-full">
         <section className="mt-6 grid grid-cols-12 gap-10">
           <div className="col-span-8 flex flex-col ">
             <div className="mt-4 mb-8 flex justify-between">
@@ -121,7 +121,7 @@ const Agenda = () => {
             </div>
 
             <div className="flex flex-col">
-              <ul className=" h-[600px] w-full overflow-auto rounded-3xl bg-white p-6 shadow-lg">
+              <ul className=" w-full overflow-auto rounded-3xl bg-white p-6 shadow-lg">
                 {tasks.length === 0 && (
                   <li className="italic text-gray-500">
                     No tasks to show for this week
@@ -139,7 +139,7 @@ const Agenda = () => {
               </ul>
             </div>
           </div>
-          <div className="col-span-4 flex flex-col gap-6">
+          <div className="sticky top-0 col-span-4 flex flex-col gap-6">
             <section className="rounded-3xl bg-gray-800 p-4 shadow-lg">
               <Calendar
                 formatShortWeekday={(locale, date) => format(date, "eeeee")}

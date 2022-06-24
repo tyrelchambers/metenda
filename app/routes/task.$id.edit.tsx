@@ -87,11 +87,11 @@ export const action: ActionFunction = async ({ request, params }) => {
     notes,
     incomplete,
     done,
-    fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
-    toDate:
-      toDate && fromDate
-        ? endOfWeek(new Date(toDate)).toISOString()
-        : undefined,
+    // fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
+    // toDate:
+    //   toDate && fromDate
+    //     ? endOfWeek(new Date(toDate)).toISOString()
+    //     : undefined,
   });
 
   return redirect("/agenda");
@@ -229,7 +229,7 @@ const TaskEdit = () => {
             />
           </LocalizationProvider>
 
-          {!newTask.willRepeatEveryWeek && (
+          {!newTask.toDate && (
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="To"

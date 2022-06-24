@@ -33,9 +33,11 @@ async function seed() {
   for (let index = 0; index < 10; index++) {
     await prisma.task.create({
       data: {
-        title: `My ${index} task`,
+        title: faker.company.companyName(),
         notes: faker.lorem.paragraph(),
         userId: user.id,
+        done: false,
+        incomplete: false,
       },
     });
   }
