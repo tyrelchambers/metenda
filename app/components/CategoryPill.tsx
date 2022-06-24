@@ -8,11 +8,12 @@ export enum CategoryPillSize {
 }
 
 interface CategoryPillProps {
-  data: Category;
+  data: Category | { title: string; color: string };
   isActive?: boolean;
   isActiveClass?: string;
   onClick?: () => void;
   size?: CategoryPillSize;
+  title?: string;
 }
 
 const sizes = {

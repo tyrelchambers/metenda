@@ -1,4 +1,4 @@
-import { Task } from "@prisma/client";
+import { Category, Task } from "@prisma/client";
 
 export interface TaskRepeatDetails {
   fromDate: Date;
@@ -7,7 +7,7 @@ export interface TaskRepeatDetails {
   willRepeatEveryWeek: boolean;
 }
 
-export interface CommonFormData extends Partial<Task> {
+export interface CommonFormData extends Partial<Task & Category> {
   willRepeatEveryWeek: boolean;
 }
 
