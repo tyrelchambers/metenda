@@ -6,15 +6,13 @@ export function createCategory({
   title,
   userId,
   color,
-  textColor,
-}: Pick<Category, "title" | "color" | "textColor"> & {
+}: Pick<Category, "title" | "color"> & {
   userId: User["id"];
 }) {
   return prisma.category.create({
     data: {
       title,
       color,
-      textColor,
       user: {
         connect: {
           id: userId,
@@ -50,10 +48,9 @@ export function getCategoryById({
 export function updateCategory({
   title,
   color,
-  textColor,
   id,
   userId,
-}: Pick<Category, "title" | "color" | "textColor"> & {
+}: Pick<Category, "title" | "color"> & {
   userId: User["id"];
   id: Category["id"];
 }) {
@@ -65,7 +62,6 @@ export function updateCategory({
     data: {
       title,
       color,
-      textColor,
     },
   });
 }

@@ -27,10 +27,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = requireUserId(request);
   const formData = await request.formData();
-  const { title, color, textColor } = await getCommonFormData(formData, [
+  const { title, color } = await getCommonFormData(formData, [
     "title",
     "color",
-    "textColor",
   ]);
 
   await updateCategory({
@@ -38,7 +37,6 @@ export const action: ActionFunction = async ({ request, params }) => {
     id: params.id,
     title,
     color,
-    textColor,
   });
 
   return redirect(`/categories`);
@@ -51,9 +49,8 @@ const CategoryEdit = () => {
 
   const handleColorChange = () => {
     const color = getRandomColor();
-    const textColor = isDarkColor(color) ? "#ffffff" : "#000000";
 
-    setCategory({ ...category, color, textColor });
+    setCategory({ ...category, color });
   };
 
   return (
@@ -99,13 +96,6 @@ const CategoryEdit = () => {
               name="color"
               readOnly
             />
-            <input
-              type="text"
-              hidden
-              value={category.textColor}
-              name="textColor"
-              readOnly
-            />
           </div>
 
           <div className="flex flex-col">
@@ -113,8 +103,9 @@ const CategoryEdit = () => {
             <p
               className={`w-fit rounded-full bg-gray-100 px-4 py-1 text-sm`}
               style={{
-                backgroundColor: category.color,
-                color: category.textColor,
+                border: `1.5px solid ${color}`,
+                backgroundColor: `${color}33`,
+                color: color,
               }}
             >
               category preview
