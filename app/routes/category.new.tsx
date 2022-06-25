@@ -1,19 +1,12 @@
 import { ActionFunction, redirect } from "@remix-run/server-runtime";
-import { Form, useFetcher } from "@remix-run/react";
-import React, { useState } from "react";
-import { getCommonFormData, getRandomColor, useUser } from "~/utils";
+import { getCommonFormData, useUser } from "~/utils";
 
-import { Button } from "~/components/Button";
-import CategoryPill from "~/components/CategoryPill";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Input from "~/components/Input";
-import Label from "~/components/Label";
 import Main from "~/layout/Main";
 import NewCategoryForm from "~/forms/NewCategoryForm";
 import Wrapper from "~/layout/Wrapper";
 import { createCategory } from "~/models/category.server";
-import { faDice } from "@fortawesome/free-solid-svg-icons";
 import { requireUserId } from "~/session.server";
+import { useFetcher } from "@remix-run/react";
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
