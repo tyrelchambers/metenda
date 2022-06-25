@@ -126,6 +126,7 @@ const NewItem = () => {
               onChange={(e) =>
                 setNewTask({ ...newTask, title: e.target.value })
               }
+              id="title"
             />
           </div>
 
@@ -138,6 +139,7 @@ const NewItem = () => {
               onChange={(e) =>
                 setNewTask({ ...newTask, notes: e.target.value })
               }
+              id="notes"
             />
           </div>
           <hr />
@@ -194,7 +196,7 @@ const NewItem = () => {
               Categories
               <div className="w-fit">
                 <Button variant="secondary" onClick={() => modalState.open()}>
-                  Create task
+                  Create category
                 </Button>
               </div>
             </Label>
@@ -227,7 +229,7 @@ const NewItem = () => {
             <Button variant="secondary" onClick={() => navigate("/agenda")}>
               Discard
             </Button>
-            <Button onClick={submitHandler}>Save task</Button>
+            <Button onClick={submitHandler}>Create task</Button>
           </div>
         </fetcher.Form>
       </main>

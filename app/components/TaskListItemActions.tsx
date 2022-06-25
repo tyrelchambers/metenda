@@ -1,8 +1,7 @@
+import { Form, Link } from "@remix-run/react";
 import { faPencil, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Form } from "@remix-run/react";
-import { Link } from "react-router-dom";
 import React from "react";
 import { Task } from "@prisma/client";
 
@@ -30,7 +29,7 @@ const TaskListItemActions = ({ task, markAsIncomplete }: Props) => {
         />
       </Link>
       <Form method="delete" action={`/task/${task.id}/delete`}>
-        <button type="submit">
+        <button type="submit" data-testId="delete-task">
           <FontAwesomeIcon
             icon={faTrash}
             className="text-gray-500 transition-all hover:text-red-500"
