@@ -3,9 +3,8 @@ import React, { Fragment } from "react";
 
 import { useModal } from "~/stores/useModal";
 
-const Modal = ({ title, description, footerActions }) => {
+const Modal = ({ title, description, footerActions, content }) => {
   const state = useModal();
-  console.log(state);
 
   return (
     <Transition appear show={state.isOpen} as={Fragment}>
@@ -43,7 +42,7 @@ const Modal = ({ title, description, footerActions }) => {
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">{description}</p>
                 </div>
-                {content()}
+                {content}
                 <div className="mt-4 flex gap-4">{footerActions()}</div>
               </Dialog.Panel>
             </Transition.Child>
