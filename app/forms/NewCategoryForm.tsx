@@ -26,7 +26,7 @@ const NewCategoryForm = ({ handleSubmit, redirectTo }: Props) => {
 
   return (
     <fetcher.Form
-      className="shadow-lgl mt-8 flex w-full max-w-xl flex-col gap-4 rounded-3xl bg-white"
+      className="mt-8 flex w-full  flex-col gap-4 rounded-3xl bg-white "
       onSubmit={handleSubmit}
     >
       <div className="flex flex-col">
