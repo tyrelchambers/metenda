@@ -5,6 +5,7 @@ import {
 } from "@remix-run/server-runtime";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { addWeeks, endOfWeek, startOfWeek } from "date-fns";
+import { getCommonFormData, useUser } from "~/utils";
 import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -12,13 +13,15 @@ import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
+import Modal from "~/components/Modal";
+import NewCategoryForm from "~/forms/NewCategoryForm";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { createTask } from "~/models/task.server";
 import { getAllCategories } from "~/models/category.server";
-import { getCommonFormData } from "~/utils";
 import { requireUserId } from "~/session.server";
+import { useModal } from "~/stores/useModal";
 import { useTask } from "~/hooks/useTask";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -56,6 +59,9 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const NewItem = () => {
+  const modalState = useModal((state) => state);
+  const user = useUser();
+
   const fetcher = useFetcher();
   const {
     newTask,
@@ -82,6 +88,27 @@ const NewItem = () => {
       },
       { method: "post" }
     );
+  };
+
+  const createCategoryHandler = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const { title, color } = await getCommonFormData(formData, [
+      "title",
+      "color",
+    ]);
+
+    fetcher.submit(
+      {
+        userId: user.id,
+        title,
+        color,
+      },
+      { method: "post", action: "/category/new" }
+    );
+
+    modalState.close();
   };
 
   return (
@@ -133,7 +160,7 @@ const NewItem = () => {
           <div className="grid grid-cols-2 gap-6">
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label="From"
+                label="From week of"
                 value={newTask.fromDate}
                 onChange={(newValue) => {
                   setNewTask({ ...newTask, fromDate: newValue?.toISOString() });
@@ -145,11 +172,12 @@ const NewItem = () => {
             {!newTask.willRepeatEveryWeek && (
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label="To"
+                  label="To week of"
                   value={newTask.toDate}
                   onChange={(newValue) => {
                     setNewTask({ ...newTask, toDate: newValue?.toISOString() });
                   }}
+                  minDate={newTask.fromDate}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
@@ -159,8 +187,25 @@ const NewItem = () => {
           <hr />
 
           <div className="flex flex-col">
-            <Label htmlFor="categoryies">Categories</Label>
-            <ul className="mt-2 flex flex-wrap gap-2">
+            <Label
+              htmlFor="categoryies"
+              className="flex items-center justify-between"
+            >
+              Categories
+              <div className="w-fit">
+                <Button variant="secondary" onClick={() => modalState.open()}>
+                  Create task
+                </Button>
+              </div>
+            </Label>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {categories.length === 0 && (
+                <li>
+                  <p className="text-sm italic text-gray-400">
+                    There aren't any categories. You can create one.
+                  </p>
+                </li>
+              )}
               {categories.map((category: Category) => (
                 <li key={category.id}>
                   <p
@@ -175,6 +220,7 @@ const NewItem = () => {
               ))}
             </ul>
           </div>
+
           <hr className="mt-4 mb-4" />
 
           <div className="flex items-center gap-4">
@@ -185,6 +231,17 @@ const NewItem = () => {
           </div>
         </fetcher.Form>
       </main>
+      <Modal
+        title="Create a category"
+        description="This will quickly create a new category to associate with your task"
+        content={
+          <NewCategoryForm
+            redirectTo="/task/new"
+            handleSubmit={createCategoryHandler}
+          />
+        }
+        footerActions={() => null}
+      />
     </Wrapper>
   );
 };
