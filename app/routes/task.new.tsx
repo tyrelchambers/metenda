@@ -12,6 +12,7 @@ import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
+import Modal from "~/components/Modal";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
@@ -19,6 +20,7 @@ import { createTask } from "~/models/task.server";
 import { getAllCategories } from "~/models/category.server";
 import { getCommonFormData } from "~/utils";
 import { requireUserId } from "~/session.server";
+import { useModal } from "~/stores/useModal";
 import { useTask } from "~/hooks/useTask";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -56,6 +58,8 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const NewItem = () => {
+  const openModal = useModal((state) => state.open);
+
   const fetcher = useFetcher();
   const {
     newTask,
@@ -133,7 +137,7 @@ const NewItem = () => {
           <div className="grid grid-cols-2 gap-6">
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label="From"
+                label="From week of"
                 value={newTask.fromDate}
                 onChange={(newValue) => {
                   setNewTask({ ...newTask, fromDate: newValue?.toISOString() });
@@ -145,11 +149,12 @@ const NewItem = () => {
             {!newTask.willRepeatEveryWeek && (
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label="To"
+                  label="To week of"
                   value={newTask.toDate}
                   onChange={(newValue) => {
                     setNewTask({ ...newTask, toDate: newValue?.toISOString() });
                   }}
+                  minDate={newTask.fromDate}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
@@ -175,6 +180,8 @@ const NewItem = () => {
               ))}
             </ul>
           </div>
+
+          <Button onClick={() => openModal()}>Open</Button>
           <hr className="mt-4 mb-4" />
 
           <div className="flex items-center gap-4">
@@ -185,6 +192,17 @@ const NewItem = () => {
           </div>
         </fetcher.Form>
       </main>
+      <Modal
+        title="Create a category"
+        description="This will quickly create a new category to associate with your task"
+        content={<></>}
+        footerActions={() => (
+          <>
+            <Button variant="secondary">Cancel</Button>
+            <Button>Create</Button>
+          </>
+        )}
+      />
     </Wrapper>
   );
 };
