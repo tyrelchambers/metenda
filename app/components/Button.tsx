@@ -14,7 +14,7 @@ export const Button = ({
     return (
       <button
         type="button"
-        className={`h-[38px] min-w-fit rounded-lg border-2 border-gray-200 bg-white px-6 text-sm text-gray-800 transition-all hover:bg-gray-200 ${className}`}
+        className={`h-[38px] min-w-fit rounded-lg border-2 border-gray-200 bg-white px-6 text-sm text-gray-600 transition-all hover:bg-gray-200 ${className}`}
         {...prop}
       >
         {children}

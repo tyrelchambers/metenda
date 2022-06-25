@@ -199,6 +199,13 @@ const NewItem = () => {
               </div>
             </Label>
             <ul className="mt-6 flex flex-wrap gap-2">
+              {categories.length === 0 && (
+                <li>
+                  <p className="text-sm italic text-gray-400">
+                    There aren't any categories. You can create one.
+                  </p>
+                </li>
+              )}
               {categories.map((category: Category) => (
                 <li key={category.id}>
                   <p
@@ -229,8 +236,6 @@ const NewItem = () => {
         description="This will quickly create a new category to associate with your task"
         content={
           <NewCategoryForm
-            submitFunction={() => modal.close()}
-            action="/category/new"
             redirectTo="/task/new"
             handleSubmit={createCategoryHandler}
           />

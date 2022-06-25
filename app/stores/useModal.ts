@@ -1,6 +1,12 @@
 import create from "zustand";
 
-export const useModal = create((set) => ({
+interface Props {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+}
+
+export const useModal = create<Props>((set) => ({
   isOpen: false,
   open: () => set(() => ({ isOpen: true })),
   close: () => set(() => ({ isOpen: false })),

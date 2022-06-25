@@ -8,11 +8,12 @@ import { getRandomColor } from "~/utils";
 import { useFetcher } from "@remix-run/react";
 import { useState } from "react";
 
-const NewCategoryForm = ({
-  handleSubmit,
-  action = "/category/new",
-  redirectTo,
-}) => {
+interface Props {
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  redirectTo: string;
+}
+
+const NewCategoryForm = ({ handleSubmit, redirectTo }: Props) => {
   const fetcher = useFetcher();
 
   const [color, setColor] = useState("#8E4AD0");
