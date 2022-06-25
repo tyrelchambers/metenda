@@ -13,7 +13,7 @@ export const useTask = (task?: Task) => {
       title: "",
       notes: "",
       fromDate: currentDay,
-      toDate: addWeeks(currentDay, 1),
+      toDate: currentDay,
     }
   );
 
