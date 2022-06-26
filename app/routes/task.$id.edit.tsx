@@ -11,6 +11,7 @@ import {
   getTaskById,
   updateTask,
 } from "~/models/task.server";
+import { endOfWeek, startOfWeek } from "date-fns";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button } from "~/components/Button";
@@ -84,16 +85,14 @@ export const action: ActionFunction = async ({ request, params }) => {
     userId,
     title,
     notes,
-    incomplete,
-    done,
-    // fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
-    // toDate:
-    //   toDate && fromDate
-    //     ? endOfWeek(new Date(toDate)).toISOString()
-    //     : undefined,
+    incomplete: incomplete === "true",
+    done: done === "true",
+    fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
+    toDate: toDate ? endOfWeek(new Date(toDate)).toISOString() : undefined,
   });
 
-  return redirect("/agenda");
+  // return redirect("/agenda");
+  return null;
 };
 
 const TaskEdit = () => {

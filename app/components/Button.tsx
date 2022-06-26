@@ -4,6 +4,9 @@ interface IButton {
   [x: string]: any;
 }
 
+export const PrimaryButtonStyles = `flex h-[40px] min-w-fit items-center justify-center rounded-lg bg-indigo-500 px-6 text-sm text-white transition-all hover:bg-indigo-600`;
+export const SecondaryButtonStyles = `h-[42px] min-w-fit flex items-center justify-center no-underline rounded-lg border-2 border-gray-200 bg-white px-6 text-sm text-gray-600 transition-all hover:bg-gray-200`;
+
 export const Button = ({
   variant,
   children,
@@ -14,7 +17,7 @@ export const Button = ({
     return (
       <button
         type="button"
-        className={`h-[38px] min-w-fit rounded-lg border-2 border-gray-200 bg-white px-6 text-sm text-gray-600 transition-all hover:bg-gray-200 ${className}`}
+        className={`${SecondaryButtonStyles} ${className}`}
         {...prop}
       >
         {children}
@@ -24,7 +27,7 @@ export const Button = ({
   return (
     <button
       type="submit"
-      className={`h-[35px] min-w-fit rounded-lg bg-indigo-500 px-6 text-sm text-white transition-all hover:bg-indigo-600 ${className}`}
+      className={`${PrimaryButtonStyles} ${className}`}
       {...prop}
     >
       {children}
