@@ -10,7 +10,13 @@ import TaskStatus from "./TaskStatus";
 import { faFlag } from "@fortawesome/free-solid-svg-icons";
 import { taskStatus } from "~/utils";
 
-const TaskList = ({ task }: { task: Task }) => {
+const TaskList = ({
+  task,
+  redirectTo = "/agenda",
+}: {
+  task: Task;
+  redirectTo?: string;
+}) => {
   const fetcher = useFetcher();
 
   const onChangeHandler = (checked: boolean) => {
@@ -74,6 +80,7 @@ const TaskList = ({ task }: { task: Task }) => {
       <TaskListItemActions
         task={task}
         markAsIncomplete={() => markAsIncomplete(!task.incomplete)}
+        redirectTo={redirectTo}
       />
     </li>
   );

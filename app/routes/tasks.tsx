@@ -15,30 +15,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   return tasks;
 };
 
-export const action: ActionFunction = async ({ request }) => {
-  const userId = await requireUserId(request);
-
-  const formData = await request.formData();
-  const type = formData.get("type");
-
-  switch (type) {
-    case "toggleDone": {
-      const taskId = formData.get("id");
-      const done = formData.get("done");
-
-      return await updateTask({ userId, id: taskId, done: done === "true" });
-    }
-
-    case "delete": {
-      const taskId = formData.get("id");
-
-      return await deleteTask({ userId, id: taskId });
-    }
-  }
-
-  return null;
-};
-
 const Tasks = () => {
   const tasks = useLoaderData();
 
@@ -50,7 +26,7 @@ const Tasks = () => {
         </h1>
         <ul>
           {tasks.map((task: Task) => (
-            <TaskList task={task} key={task.id} />
+            <TaskList task={task} key={task.id} redirectTo="/tasks" />
           ))}
         </ul>
       </Main>

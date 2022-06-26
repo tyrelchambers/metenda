@@ -110,17 +110,15 @@ export async function updateTask({
 }: Partial<Task> & {
   userId: User["id"];
 }) {
-  console.log(done, incomplete);
-
   return prisma.task.updateMany({
     where: { id, userId },
     data: {
-      done,
+      done: done === "true",
       title,
       notes,
       fromDate,
       toDate,
-      incomplete,
+      incomplete: incomplete === "true",
     },
   });
 }

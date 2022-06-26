@@ -23,9 +23,7 @@ export const useTask = (task?: Task) => {
 
   const categoriesHandler = (category: Category) => {
     if (selectedCategories.includes(category)) {
-      setSelectedCategories(
-        selectedCategories.filter((c) => c.id !== category.id)
-      );
+      setSelectedCategories(selectedCategories.filter((c) => c !== category));
     } else {
       setSelectedCategories([...selectedCategories, category]);
     }

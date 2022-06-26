@@ -4,7 +4,6 @@ import {
   redirect,
 } from "@remix-run/server-runtime";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import {
   createCategoryOnTask,
   deleteCategoryOnTask,
@@ -12,15 +11,17 @@ import {
   updateTask,
 } from "~/models/task.server";
 import { endOfWeek, startOfWeek } from "date-fns";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
-import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
+import LabelSubtitle from "~/components/LabelSubtitle";
 import Main from "~/layout/Main";
+import { MultiSelect } from "@mantine/core";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
@@ -85,25 +86,20 @@ export const action: ActionFunction = async ({ request, params }) => {
     userId,
     title,
     notes,
-    incomplete: incomplete === "true",
-    done: done === "true",
+    incomplete,
+    done,
     fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
-    toDate: toDate ? endOfWeek(new Date(toDate)).toISOString() : undefined,
+    toDate:
+      toDate != "null" ? endOfWeek(new Date(toDate)).toISOString() : undefined,
   });
 
-  // return redirect("/agenda");
-  return null;
+  return redirect(`/task/${params.id}`);
 };
 
 const TaskEdit = () => {
   const { task, categories } = useLoaderData();
-  const {
-    newTask,
-    setNewTask,
-    categoriesHandler,
-    isActiveCategory,
-    selectedCategories,
-  } = useTask(task);
+  const { newTask, setNewTask, categoriesHandler, selectedCategories } =
+    useTask(task);
   const fetcher = useFetcher();
 
   const deleteHandler = (categoryId: string) => {
@@ -122,12 +118,13 @@ const TaskEdit = () => {
         ...newTask,
         categories:
           selectedCategories.length > 0
-            ? selectedCategories.map((c) => c.id)
+            ? selectedCategories.map((c) => c)
             : null,
         type: "updateTask",
       },
       { method: "post" }
     );
+    window.location.reload();
   };
 
   const filterExistingCategories = () => {
@@ -141,8 +138,10 @@ const TaskEdit = () => {
   return (
     <Wrapper>
       <Main>
-        <h1 className="text-3xl font-bold text-gray-800">{task.title}</h1>
-        <Form method="patch" className="flex flex-col gap-4">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Editing: {task.title}
+        </h1>
+        <fetcher.Form className="flex flex-col gap-8">
           <div className="flex flex-col">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -157,6 +156,8 @@ const TaskEdit = () => {
           </div>
           <div className="flex flex-col">
             <Label htmlFor="notes">Notes</Label>
+            <LabelSubtitle text="Use notes to add any additional information" />
+
             <Textarea
               placeholder="Task notes"
               name="notes"
@@ -167,105 +168,115 @@ const TaskEdit = () => {
               }
             />
           </div>
-        </Form>
 
-        <div className="flex flex-col">
-          <Label>Task categories</Label>
-          <ul className="flex flex-col">
-            {newTask.categories.length === 0 && (
+          <div className="flex flex-col">
+            <Label>Task categories</Label>
+            <LabelSubtitle text="These categories are already associated with this task" />
+
+            <ul className="flex flex-col">
+              {newTask.categories.length === 0 && (
+                <p className="text-sm font-thin italic text-gray-500">
+                  No categories on this task
+                </p>
+              )}
+              {newTask.categories.map((c) => (
+                <li
+                  key={c.category.id}
+                  className="flex items-center justify-between border-b-[1px] border-gray-300 py-4"
+                >
+                  <p className="text-sm text-gray-600">{c.category.title}</p>
+                  <fetcher.Form>
+                    <button
+                      onClick={() => deleteHandler(c.category.id)}
+                      type="button"
+                    >
+                      <FontAwesomeIcon
+                        icon={faMinusCircle}
+                        className="text-gray-500 transition-all hover:text-red-500"
+                        style={{ width: "16px" }}
+                      />
+                    </button>
+                  </fetcher.Form>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex flex-col">
+            <Label>Repeat</Label>
+            <LabelSubtitle text="When would you like this task to run until?" />
+
+            <label className="mb-4 mt-4 text-sm text-gray-800">
+              <input
+                type="checkbox"
+                name="willRepeat"
+                checked={newTask.willRepeatEveryWeek}
+                onChange={(e) =>
+                  setNewTask({
+                    ...newTask,
+                    willRepeatEveryWeek: e.target.checked,
+                  })
+                }
+                className="mr-2"
+              />
+              Every week
+            </label>
+            <div className="grid grid-cols-2 gap-6">
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="From"
+                  value={newTask.fromDate}
+                  onChange={(newValue) => {
+                    setNewTask({
+                      ...newTask,
+                      fromDate: newValue?.toISOString(),
+                    });
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+
+              {!newTask.toDate && (
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="To"
+                    value={newTask.toDate}
+                    onChange={(newValue) => {
+                      setNewTask({
+                        ...newTask,
+                        toDate: newValue?.toISOString(),
+                      });
+                    }}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <Label htmlFor="categoryies">Add categories</Label>
+            {filterExistingCategories().length === 0 && (
               <p className="text-sm font-thin italic text-gray-500">
-                No categories on this task
+                There aren't any categories available to add to this task
               </p>
             )}
-            {newTask.categories.map((c) => (
-              <li
-                key={c.category.id}
-                className="flex items-center justify-between border-b-[1px] border-gray-300 py-4"
-              >
-                <p className="text-sm text-gray-600">{c.category.title}</p>
-                <fetcher.Form>
-                  <button
-                    onClick={() => deleteHandler(c.category.id)}
-                    type="button"
-                  >
-                    <FontAwesomeIcon
-                      icon={faMinusCircle}
-                      className="text-gray-500 transition-all hover:text-red-500"
-                      style={{ width: "16px" }}
-                    />
-                  </button>
-                </fetcher.Form>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <p className="text-indigo-500">Repeat</p>
-        <label className="mb-2 text-sm text-gray-800">
-          <input
-            type="checkbox"
-            name="willRepeat"
-            checked={newTask.willRepeatEveryWeek}
-            onChange={(e) =>
-              setNewTask({
-                ...newTask,
-                willRepeatEveryWeek: e.target.checked,
-              })
-            }
-            className="mr-2"
-          />
-          Every week
-        </label>
-        <div className="grid grid-cols-2 gap-6">
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="From"
-              value={newTask.fromDate}
-              onChange={(newValue) => {
-                setNewTask({ ...newTask, fromDate: newValue?.toISOString() });
-              }}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </LocalizationProvider>
-
-          {!newTask.toDate && (
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="To"
-                value={newTask.toDate}
-                onChange={(newValue) => {
-                  setNewTask({ ...newTask, toDate: newValue?.toISOString() });
-                }}
-                renderInput={(params) => <TextField {...params} />}
+            {filterExistingCategories().length > 0 && (
+              <MultiSelect
+                data={filterExistingCategories().map((c: Category) => ({
+                  value: c.id,
+                  label: c.title,
+                }))}
+                placeholder="Pick your categories"
+                onChange={(e) => categoriesHandler(e)}
               />
-            </LocalizationProvider>
-          )}
-        </div>
-        <div className="flex flex-col">
-          <Label htmlFor="categoryies">Add categories</Label>
-          {filterExistingCategories().length === 0 && (
-            <p className="text-sm italic text-gray-500">
-              There aren't any categories available to add to this task
-            </p>
-          )}
-          <ul className="mt-2 flex flex-wrap gap-2">
-            {filterExistingCategories().map((category: Category) => (
-              <li key={category.id}>
-                <CategoryPill
-                  data={category}
-                  isActiveClass="!bg-indigo-500 !text-white"
-                  isActive={isActiveCategory(category)}
-                  onClick={() => categoriesHandler(category)}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-        <hr className="mt-4 mb-4" />
+            )}
+          </div>
+          <hr className="mt-4 mb-4" />
 
-        <div className="flex items-center gap-4">
-          <Button variant="secondary">Discard</Button>
-          <Button onClick={submitHandler}>Update task</Button>
-        </div>
+          <div className="flex items-center gap-4">
+            <Button variant="secondary">Discard</Button>
+            <Button onClick={submitHandler}>Update task</Button>
+          </div>
+        </fetcher.Form>
       </Main>
     </Wrapper>
   );

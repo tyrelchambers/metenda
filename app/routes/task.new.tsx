@@ -13,7 +13,10 @@ import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
+import LabelSubtitle from "~/components/LabelSubtitle";
+import Main from "~/layout/Main";
 import Modal from "~/components/Modal";
+import { MultiSelect } from "@mantine/core";
 import NewCategoryForm from "~/forms/NewCategoryForm";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
@@ -55,7 +58,7 @@ export const action: ActionFunction = async ({ request }) => {
     categories,
   });
 
-  return redirect("/agenda");
+  return redirect("/task/new");
 };
 
 const NewItem = () => {
@@ -63,27 +66,20 @@ const NewItem = () => {
   const user = useUser();
 
   const fetcher = useFetcher();
-  const {
-    newTask,
-    setNewTask,
-    categoriesHandler,
-    isActiveCategory,
-    selectedCategories,
-  } = useTask();
+  const { newTask, setNewTask, categoriesHandler, selectedCategories } =
+    useTask();
 
   const navigate = useNavigate();
 
   const { categories } = useLoaderData();
 
   const submitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
     fetcher.submit(
       {
         ...newTask,
         categories:
           selectedCategories.length > 0
-            ? selectedCategories.map((c) => c.id)
+            ? selectedCategories.map((c) => c)
             : null,
       },
       { method: "post" }
@@ -113,9 +109,9 @@ const NewItem = () => {
 
   return (
     <Wrapper>
-      <main className="w-full">
+      <Main>
         <h1 className="text-3xl font-bold text-gray-800">Create a new task</h1>
-        <fetcher.Form className="mt-8 flex w-full max-w-xl flex-col gap-4 rounded-3xl bg-white p-6 shadow-lg">
+        <fetcher.Form className="flex flex-col gap-8">
           <div className="flex flex-col">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -132,6 +128,7 @@ const NewItem = () => {
 
           <div className="flex flex-col">
             <Label htmlFor="notes">Notes</Label>
+            <LabelSubtitle text="Use notes to add any additional information" />
             <Textarea
               placeholder="Task notes"
               name="notes"
@@ -142,51 +139,57 @@ const NewItem = () => {
               id="notes"
             />
           </div>
-          <hr />
-          <p className="text-indigo-500">Repeat</p>
-          <label className="mb-2 text-sm text-gray-800">
-            <input
-              type="checkbox"
-              name="willRepeat"
-              checked={newTask.willRepeatEveryWeek}
-              onChange={(e) =>
-                setNewTask({
-                  ...newTask,
-                  willRepeatEveryWeek: e.target.checked,
-                })
-              }
-              className="mr-2"
-            />
-            Every week
-          </label>
-          <div className="grid grid-cols-2 gap-6">
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="From week of"
-                value={newTask.fromDate}
-                onChange={(newValue) => {
-                  setNewTask({ ...newTask, fromDate: newValue?.toISOString() });
-                }}
-                renderInput={(params) => <TextField {...params} />}
+          <div className="flex flex-col">
+            <Label>Repeat</Label>
+            <LabelSubtitle text="When would you like this task to run until?" />
+            <label className="mb-6 mt-2  text-sm text-gray-600">
+              <input
+                type="checkbox"
+                name="willRepeat"
+                checked={newTask.willRepeatEveryWeek}
+                onChange={(e) =>
+                  setNewTask({
+                    ...newTask,
+                    willRepeatEveryWeek: e.target.checked,
+                  })
+                }
+                className="mr-2"
               />
-            </LocalizationProvider>
-
-            {!newTask.willRepeatEveryWeek && (
+              Every week
+            </label>
+            <div className="grid grid-cols-2 gap-6">
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label="To week of"
-                  value={newTask.toDate}
+                  label="From week of"
+                  value={newTask.fromDate}
                   onChange={(newValue) => {
-                    setNewTask({ ...newTask, toDate: newValue?.toISOString() });
+                    setNewTask({
+                      ...newTask,
+                      fromDate: newValue?.toISOString(),
+                    });
                   }}
-                  minDate={newTask.fromDate}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
-            )}
-          </div>
 
-          <hr />
+              {!newTask.willRepeatEveryWeek && (
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="To week of"
+                    value={newTask.toDate}
+                    onChange={(newValue) => {
+                      setNewTask({
+                        ...newTask,
+                        toDate: newValue?.toISOString(),
+                      });
+                    }}
+                    minDate={newTask.fromDate}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              )}
+            </div>
+          </div>
 
           <div className="flex flex-col">
             <Label
@@ -200,27 +203,22 @@ const NewItem = () => {
                 </Button>
               </div>
             </Label>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {categories.length === 0 && (
-                <li>
-                  <p className="text-sm italic text-gray-400">
-                    There aren't any categories. You can create one.
-                  </p>
-                </li>
-              )}
-              {categories.map((category: Category) => (
-                <li key={category.id}>
-                  <p
-                    className={`cursor-pointer rounded-full bg-gray-100 px-3 py-1 ${
-                      isActiveCategory(category) && "!bg-indigo-500 text-white"
-                    }`}
-                    onClick={() => categoriesHandler(category)}
-                  >
-                    {category.title}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            {categories.length === 0 && (
+              <p className="text-sm italic text-gray-400">
+                There aren't any categories. You can create one.
+              </p>
+            )}
+            {categories.length > 0 && (
+              <MultiSelect
+                data={categories.map((c: Category) => ({
+                  value: c.id,
+                  label: c.title,
+                }))}
+                placeholder="Pick your categories"
+                onChange={(e) => categoriesHandler(e)}
+                className="mt-2"
+              />
+            )}
           </div>
 
           <hr className="mt-4 mb-4" />
@@ -232,7 +230,7 @@ const NewItem = () => {
             <Button onClick={submitHandler}>Create task</Button>
           </div>
         </fetcher.Form>
-      </main>
+      </Main>
       <Modal
         title="Create a category"
         description="This will quickly create a new category to associate with your task"
