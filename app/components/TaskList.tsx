@@ -28,8 +28,13 @@ const TaskList = ({
 
   const markAsIncomplete = (incomplete: boolean) => {
     fetcher.submit(
-      { id: task.id, incomplete: String(incomplete), type: "markAsIncomplete" },
-      { method: "post" }
+      {
+        id: task.id,
+        incomplete: String(incomplete),
+        type: "markAsIncomplete",
+        redirectTo,
+      },
+      { method: "post", action: `/task/${task.id}/edit` }
     );
   };
 

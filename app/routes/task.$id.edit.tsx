@@ -3,7 +3,9 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/server-runtime";
+import { Category, Task } from "@prisma/client";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import {
   createCategoryOnTask,
   deleteCategoryOnTask,
@@ -11,11 +13,11 @@ import {
   updateTask,
 } from "~/models/task.server";
 import { endOfWeek, startOfWeek } from "date-fns";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { faMinusCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button } from "~/components/Button";
-import { Category } from "@prisma/client";
+import CheckBox from "~/components/CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
@@ -25,7 +27,6 @@ import { MultiSelect } from "@mantine/core";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
-import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 import { getAllCategories } from "~/models/category.server";
 import { getCommonFormData } from "~/utils";
 import { requireUserId } from "~/session.server";
@@ -42,7 +43,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request);
   const formData = await request.formData();
-  const categories = formData.get("categories") as string;
+  const redirectTo = (await formData.get("redirectTo")) as string;
+
+  const categories = formData.getAll("newCategory");
 
   const { title, notes, taskId, fromDate, toDate, done, incomplete } =
     await getCommonFormData(formData, [
@@ -58,30 +61,17 @@ export const action: ActionFunction = async ({ request, params }) => {
   const type = formData.get("type") as string;
   const categoryId = formData.get("categoryId") as string;
 
-  switch (type) {
-    case "deleteCategoryOnTask": {
-      return await deleteCategoryOnTask({
-        categoryId,
-        taskId,
+  if (categories.length) {
+    for (let index = 0; index < categories.length; index++) {
+      const element = categories[index];
+      await createCategoryOnTask({
+        taskId: params.id,
+        categoryId: element,
       });
-    }
-    case "updateTask": {
-      if (categories != "null") {
-        const categoryIds = categories.split(",");
-
-        for (let index = 0; index < categoryIds.length; index++) {
-          const element = categoryIds[index];
-
-          await createCategoryOnTask({
-            taskId: params.id,
-            categoryId: element,
-          });
-        }
-      }
     }
   }
 
-  await updateTask({
+  const payload: Partial<Task> = {
     id: params.id,
     userId,
     title,
@@ -89,42 +79,31 @@ export const action: ActionFunction = async ({ request, params }) => {
     incomplete,
     done,
     fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
-    toDate:
-      toDate != "null" ? endOfWeek(new Date(toDate)).toISOString() : undefined,
-  });
+  };
 
-  return redirect(`/task/${params.id}`);
+  // if (toDate !== "null" || !toDate) {
+  //   console.log(toDate);
+
+  //   payload.toDate = endOfWeek(new Date(toDate)).toISOString();
+  // }
+
+  await updateTask({ ...payload });
+
+  return redirect(redirectTo || `/task/${params.id}`);
 };
 
 const TaskEdit = () => {
   const { task, categories } = useLoaderData();
   const { newTask, setNewTask, categoriesHandler, selectedCategories } =
     useTask(task);
-  const fetcher = useFetcher();
 
   const deleteHandler = (categoryId: string) => {
-    fetcher.submit(
-      { categoryId, taskId: newTask.id, type: "deleteCategoryOnTask" },
-      {
-        method: "post",
-      }
-    );
-    window.location.reload();
-  };
-
-  const submitHandler = () => {
-    fetcher.submit(
-      {
-        ...newTask,
-        categories:
-          selectedCategories.length > 0
-            ? selectedCategories.map((c) => c)
-            : null,
-        type: "updateTask",
-      },
-      { method: "post" }
-    );
-    window.location.reload();
+    setNewTask({
+      ...newTask,
+      categories: newTask.categories.filter(
+        (category) => category.category.id !== categoryId
+      ),
+    });
   };
 
   const filterExistingCategories = () => {
@@ -135,13 +114,17 @@ const TaskEdit = () => {
     return filteredCategories;
   };
 
+  const checkIncomplete = () => {
+    setNewTask({ ...newTask, incomplete: !newTask.incomplete });
+  };
+
   return (
     <Wrapper>
       <Main>
         <h1 className="text-3xl font-bold text-gray-800">
           Editing: {task.title}
         </h1>
-        <fetcher.Form className="flex flex-col gap-8">
+        <Form className="flex flex-col gap-8" method="patch">
           <div className="flex flex-col">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -185,18 +168,16 @@ const TaskEdit = () => {
                   className="flex items-center justify-between border-b-[1px] border-gray-300 py-4"
                 >
                   <p className="text-sm text-gray-600">{c.category.title}</p>
-                  <fetcher.Form>
-                    <button
-                      onClick={() => deleteHandler(c.category.id)}
-                      type="button"
-                    >
-                      <FontAwesomeIcon
-                        icon={faMinusCircle}
-                        className="text-gray-500 transition-all hover:text-red-500"
-                        style={{ width: "16px" }}
-                      />
-                    </button>
-                  </fetcher.Form>
+                  <button
+                    onClick={() => deleteHandler(c.category.id)}
+                    type="button"
+                  >
+                    <FontAwesomeIcon
+                      icon={faMinusCircle}
+                      className="text-gray-500 transition-all hover:text-red-500"
+                      style={{ width: "16px" }}
+                    />
+                  </button>
                 </li>
               ))}
             </ul>
@@ -235,23 +216,25 @@ const TaskEdit = () => {
                 />
               </LocalizationProvider>
 
-              {!newTask.toDate && (
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="To"
-                    value={newTask.toDate}
-                    onChange={(newValue) => {
-                      setNewTask({
-                        ...newTask,
-                        toDate: newValue?.toISOString(),
-                      });
-                    }}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-              )}
+              {!newTask.willRepeatEveryWeek ||
+                (!newTask.toDate && (
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="To"
+                      value={newTask.toDate}
+                      onChange={(newValue) => {
+                        setNewTask({
+                          ...newTask,
+                          toDate: newValue?.toISOString(),
+                        });
+                      }}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </LocalizationProvider>
+                ))}
             </div>
           </div>
+
           <div className="flex flex-col">
             <Label htmlFor="categoryies">Add categories</Label>
             {filterExistingCategories().length === 0 && (
@@ -269,14 +252,38 @@ const TaskEdit = () => {
                 onChange={(e) => categoriesHandler(e)}
               />
             )}
+            {console.log(selectedCategories)}
+            {selectedCategories.length &&
+              selectedCategories.map((c) => (
+                <input
+                  key={c}
+                  type="text"
+                  hidden
+                  readOnly
+                  value={c}
+                  name="newCategory"
+                />
+              ))}
           </div>
-          <hr className="mt-4 mb-4" />
+          <hr className="mt-4" />
+
+          <label
+            htmlFor="incomplete"
+            className="flex gap-2 text-sm text-gray-600"
+          >
+            <CheckBox
+              name="incomplete"
+              checked={newTask.incomplete || false}
+              changeHandler={checkIncomplete}
+            />
+            Mark as incomplete
+          </label>
 
           <div className="flex items-center gap-4">
             <Button variant="secondary">Discard</Button>
-            <Button onClick={submitHandler}>Update task</Button>
+            <Button>Update task</Button>
           </div>
-        </fetcher.Form>
+        </Form>
       </Main>
     </Wrapper>
   );

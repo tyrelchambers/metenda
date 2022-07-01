@@ -3,6 +3,7 @@ import {
   faHome,
   faTasks,
   faUser,
+  faUserGear,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,6 +38,11 @@ const linkGroup2: ILink[] = [
     to: "/profile",
     label: "Profile",
     icon: faUser,
+  },
+  {
+    to: "/account",
+    label: "Account",
+    icon: faUserGear,
   },
 ];
 

@@ -25,7 +25,7 @@ export const useTask = (task?: Task) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories(selectedCategories.filter((c) => c !== category));
     } else {
-      setSelectedCategories([...selectedCategories, category]);
+      setSelectedCategories([...category]);
     }
   };
 

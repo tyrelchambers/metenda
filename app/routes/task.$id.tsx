@@ -47,9 +47,10 @@ const ItemId = () => {
                 />
                 {format(parseISO(task.fromDate), "MMMM do, yyyy")}
               </p>
+
               {task.toDate && (
                 <>
-                  <hr className="flex-1" />
+                  <p className="text-gray-500">until</p>
                   <p className="text-indigo-500">
                     {format(parseISO(task.toDate), "MMMM do, yyyy")}
                   </p>
