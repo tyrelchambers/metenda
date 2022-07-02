@@ -3,20 +3,18 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/server-runtime";
+import { Button, SecondaryButtonStyles } from "~/components/Button";
 import { Category, Task } from "@prisma/client";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { Form, useFetcher, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import {
   createCategoryOnTask,
   deleteCategoryOnTask,
   getTaskById,
   updateTask,
 } from "~/models/task.server";
-import { endOfWeek, startOfWeek } from "date-fns";
-import { faMinusCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Button } from "~/components/Button";
 import CheckBox from "~/components/CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
@@ -27,9 +25,11 @@ import { MultiSelect } from "@mantine/core";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
+import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 import { getAllCategories } from "~/models/category.server";
 import { getCommonFormData } from "~/utils";
 import { requireUserId } from "~/session.server";
+import { startOfWeek } from "date-fns";
 import { useTask } from "~/hooks/useTask";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -45,9 +45,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
   const redirectTo = (await formData.get("redirectTo")) as string;
 
-  const categories = formData.getAll("newCategory");
+  const newCategories = await formData.getAll("newCategory");
+  const taskCategories = await formData.getAll("taskCategories");
+  const taskCategoriesOriginal = await formData.getAll("taskCategoriesCopy");
 
-  const { title, notes, taskId, fromDate, toDate, done, incomplete } =
+  const { title, notes, fromDate, toDate, done, incomplete } =
     await getCommonFormData(formData, [
       "title",
       "notes",
@@ -58,13 +60,27 @@ export const action: ActionFunction = async ({ request, params }) => {
       "incomplete",
     ]);
 
-  const type = formData.get("type") as string;
-  const categoryId = formData.get("categoryId") as string;
+  console.log(incomplete);
 
-  if (categories.length) {
-    for (let index = 0; index < categories.length; index++) {
-      const element = categories[index];
+  if (newCategories.length) {
+    for (let index = 0; index < newCategories.length; index++) {
+      const element = newCategories[index];
       await createCategoryOnTask({
+        taskId: params.id,
+        categoryId: element,
+      });
+    }
+  }
+
+  const categoriesToDelete = taskCategoriesOriginal.filter(
+    (category) => !taskCategories.includes(category)
+  );
+
+  if (categoriesToDelete.length) {
+    for (let index = 0; index < categoriesToDelete.length; index++) {
+      const element = categoriesToDelete[index];
+
+      await deleteCategoryOnTask({
         taskId: params.id,
         categoryId: element,
       });
@@ -76,7 +92,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     userId,
     title,
     notes,
-    incomplete,
+    incomplete: incomplete === "on" ? true : false,
     done,
     fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
   };
@@ -89,13 +105,14 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   await updateTask({ ...payload });
 
-  return redirect(redirectTo || `/task/${params.id}`);
+  return redirect(redirectTo || `/task/${params.id}/edit`);
 };
 
 const TaskEdit = () => {
   const { task, categories } = useLoaderData();
   const { newTask, setNewTask, categoriesHandler, selectedCategories } =
     useTask(task);
+  const taskCategoriesCopy = [...task.categories];
 
   const deleteHandler = (categoryId: string) => {
     setNewTask({
@@ -158,7 +175,7 @@ const TaskEdit = () => {
 
             <ul className="flex flex-col">
               {newTask.categories.length === 0 && (
-                <p className="text-sm font-thin italic text-gray-500">
+                <p className="rounded-lg bg-gray-50 p-4 text-sm font-thin italic text-gray-500">
                   No categories on this task
                 </p>
               )}
@@ -178,30 +195,34 @@ const TaskEdit = () => {
                       style={{ width: "16px" }}
                     />
                   </button>
+                  <input
+                    key={c.category.id}
+                    type="text"
+                    value={c.category.id}
+                    hidden
+                    readOnly
+                    name="taskCategories"
+                  />
                 </li>
               ))}
             </ul>
+            {!!taskCategoriesCopy.length &&
+              taskCategoriesCopy.map((c) => (
+                <input
+                  key={c.category.id}
+                  type="text"
+                  value={c.category.id}
+                  hidden
+                  readOnly
+                  name="taskCategoriesCopy"
+                />
+              ))}
           </div>
           <div className="flex flex-col">
             <Label>Repeat</Label>
-            <LabelSubtitle text="When would you like this task to run until?" />
+            <LabelSubtitle text="When would you like this task to run until? Leave the second date empty to repeat every week." />
 
-            <label className="mb-4 mt-4 text-sm text-gray-800">
-              <input
-                type="checkbox"
-                name="willRepeat"
-                checked={newTask.willRepeatEveryWeek}
-                onChange={(e) =>
-                  setNewTask({
-                    ...newTask,
-                    willRepeatEveryWeek: e.target.checked,
-                  })
-                }
-                className="mr-2"
-              />
-              Every week
-            </label>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="mt-2 grid grid-cols-2 gap-6">
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="From"
@@ -216,22 +237,19 @@ const TaskEdit = () => {
                 />
               </LocalizationProvider>
 
-              {!newTask.willRepeatEveryWeek ||
-                (!newTask.toDate && (
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      label="To"
-                      value={newTask.toDate}
-                      onChange={(newValue) => {
-                        setNewTask({
-                          ...newTask,
-                          toDate: newValue?.toISOString(),
-                        });
-                      }}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                ))}
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="To"
+                  value={newTask.toDate}
+                  onChange={(newValue) => {
+                    setNewTask({
+                      ...newTask,
+                      toDate: newValue?.toISOString(),
+                    });
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
             </div>
           </div>
 
@@ -252,8 +270,8 @@ const TaskEdit = () => {
                 onChange={(e) => categoriesHandler(e)}
               />
             )}
-            {console.log(selectedCategories)}
-            {selectedCategories.length &&
+
+            {!!selectedCategories.length &&
               selectedCategories.map((c) => (
                 <input
                   key={c}
@@ -267,20 +285,17 @@ const TaskEdit = () => {
           </div>
           <hr className="mt-4" />
 
-          <label
-            htmlFor="incomplete"
-            className="flex gap-2 text-sm text-gray-600"
-          >
-            <CheckBox
-              name="incomplete"
-              checked={newTask.incomplete || false}
-              changeHandler={checkIncomplete}
-            />
-            Mark as incomplete
-          </label>
+          <CheckBox
+            name="incomplete"
+            checked={newTask.incomplete || false}
+            changeHandler={checkIncomplete}
+            label="Mark as incomplete"
+          />
 
           <div className="flex items-center gap-4">
-            <Button variant="secondary">Discard</Button>
+            <Link className={SecondaryButtonStyles} to={`/agenda`}>
+              Discard
+            </Link>
             <Button>Update task</Button>
           </div>
         </Form>
