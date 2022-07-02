@@ -1,13 +1,10 @@
 import { Category, Task } from "@prisma/client";
 
-import { TaskRepeatDetails } from "~/types";
 import { currentDay } from "~/utils";
 import { useState } from "react";
 
 export const useTask = (task?: Task) => {
-  const [newTask, setNewTask] = useState<
-    Partial<Task & TaskRepeatDetails> | Task
-  >(
+  const [newTask, setNewTask] = useState<Partial<Task>>(
     task || {
       title: "",
       notes: "",

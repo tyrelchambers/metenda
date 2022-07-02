@@ -60,8 +60,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       "incomplete",
     ]);
 
-  console.log(incomplete);
-
   if (newCategories.length) {
     for (let index = 0; index < newCategories.length; index++) {
       const element = newCategories[index];
@@ -105,7 +103,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   await updateTask({ ...payload });
 
-  return redirect(redirectTo || `/task/${params.id}/edit`);
+  return redirect(redirectTo || `/task/${params.id}`);
 };
 
 const TaskEdit = () => {
@@ -135,8 +133,6 @@ const TaskEdit = () => {
   const checkIncomplete = () => {
     setNewTask({ ...newTask, incomplete: !newTask.incomplete });
   };
-
-  console.log(transition);
 
   return (
     <Wrapper>
@@ -177,7 +173,7 @@ const TaskEdit = () => {
             <LabelSubtitle text="These categories are already associated with this task" />
 
             <ul className="flex flex-col">
-              {newTask.categories.length === 0 && (
+              {!newTask.categories.length && (
                 <p className="rounded-lg bg-gray-50 p-4 text-sm font-thin italic text-gray-500">
                   No categories on this task
                 </p>

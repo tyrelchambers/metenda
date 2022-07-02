@@ -17,8 +17,6 @@ const TasksGraph = ({ totalTasks, completedTasks }: TasksGraphProps) => {
   const { startOfWeek } = useCurrentWeek(currentDay);
   const weeksInMonth = getWeeksInMonth(startOfWeek);
 
-  console.log(completedTasks);
-
   return (
     <Line
       datasetIdKey="id"

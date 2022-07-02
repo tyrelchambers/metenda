@@ -6,7 +6,6 @@ import { useOptionalUser } from "~/utils";
 
 export default function Index() {
   const user = useOptionalUser();
-  console.log(user);
 
   return (
     <main className="relative overflow-hidden">
