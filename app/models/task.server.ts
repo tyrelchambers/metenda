@@ -113,8 +113,6 @@ export async function updateTask({
 }: Partial<Task> & {
   userId: User["id"];
 }) {
-  console.log(priority);
-
   return prisma.task.updateMany({
     data: {
       done: done == true,

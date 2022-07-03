@@ -49,12 +49,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   const taskCategories = await formData.getAll("taskCategories");
   const taskCategoriesOriginal = await formData.getAll("taskCategoriesCopy");
 
-  const { title, notes, fromDate, toDate, done, incomplete, priority } =
+  const { title, notes, toDate, done, incomplete, priority } =
     await getCommonFormData(formData, [
       "title",
       "notes",
       "taskId",
-      "fromDate",
       "toDate",
       "done",
       "incomplete",
@@ -86,6 +85,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
   }
 
+  console.log(toDate ? endOfWeek(new Date(toDate)).toISOString() : "");
+
   const payload: Partial<Task> = {
     id: params.id,
     userId,
@@ -93,15 +94,10 @@ export const action: ActionFunction = async ({ request, params }) => {
     notes,
     priority,
     incomplete: incomplete === "on" ? true : false,
+    toDate: toDate ? endOfWeek(new Date(toDate)).toISOString() : null,
+
     done,
-    fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
   };
-
-  if (toDate) {
-    console.log("toDate: ", toDate);
-
-    payload.toDate = endOfWeek(new Date(toDate)).toISOString();
-  }
 
   await updateTask({ ...payload });
 
