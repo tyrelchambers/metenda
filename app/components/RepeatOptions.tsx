@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import { faCalendarAlt, faRepeat } from "@fortawesome/free-solid-svg-icons";
 import { faCircle2, faClock } from "@fortawesome/pro-light-svg-icons";
+import { format, parseISO } from "date-fns";
 
+import { DatePicker } from "@mantine/dates";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Popover from "./PopOver";
-import TaskDatePicker from "./TaskDatePicker";
 import { currentDay } from "~/utils";
-import { format } from "date-fns";
 import { useCurrentWeek } from "../hooks/useCurrentWeek";
 
-const RepeatOptions = () => {
+const RepeatOptions = ({
+  toDate,
+  setToDate,
+}: {
+  toDate: string;
+  setToDate: (val: Date) => void;
+}) => {
   const { startOfWeek } = useCurrentWeek(currentDay);
 
   return (
@@ -42,7 +48,14 @@ const RepeatOptions = () => {
             {format(startOfWeek, "MMM do")}
           </p>
         </div>
-        <TaskDatePicker />
+        <DatePicker
+          placeholder="Pick date"
+          label="To week of"
+          withinPortal={false}
+          value={toDate ? new Date(toDate) : null}
+          onChange={setToDate}
+          minDate={startOfWeek}
+        />
         <hr />
         <p className="t-sm text-gray-700">Repeat</p>
         <button

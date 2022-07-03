@@ -4,8 +4,6 @@ import {
   redirect,
 } from "@remix-run/server-runtime";
 import { Button, SecondaryButtonStyles } from "~/components/Button";
-import { Category, Task } from "@prisma/client";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import {
   createCategoryOnTask,
@@ -13,8 +11,8 @@ import {
   getTaskById,
   updateTask,
 } from "~/models/task.server";
+import { endOfWeek, startOfWeek } from "date-fns";
 
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import CategoriesSelector from "~/components/CategoriesSelector";
 import CheckBox from "~/components/CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,17 +21,15 @@ import Input from "~/components/Input";
 import Label from "~/components/Label";
 import LabelSubtitle from "~/components/LabelSubtitle";
 import Main from "~/layout/Main";
-import { MultiSelect } from "@mantine/core";
 import RepeatOptions from "~/components/RepeatOptions";
+import { Task } from "@prisma/client";
 import TaskPriorityPicker from "~/components/TaskPriorityPicker";
-import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 import { getAllCategories } from "~/models/category.server";
 import { getCommonFormData } from "~/utils";
 import { requireUserId } from "~/session.server";
-import { startOfWeek } from "date-fns";
 import { useTask } from "~/hooks/useTask";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -63,6 +59,8 @@ export const action: ActionFunction = async ({ request, params }) => {
       "done",
       "incomplete",
     ]);
+
+  console.log(toDate);
 
   if (newCategories.length) {
     for (let index = 0; index < newCategories.length; index++) {
@@ -99,11 +97,11 @@ export const action: ActionFunction = async ({ request, params }) => {
     fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
   };
 
-  // if (toDate !== "null" || !toDate) {
-  //   console.log(toDate);
+  if (toDate) {
+    console.log("toDate: ", toDate);
 
-  //   payload.toDate = endOfWeek(new Date(toDate)).toISOString();
-  // }
+    payload.toDate = endOfWeek(new Date(toDate)).toISOString();
+  }
 
   await updateTask({ ...payload });
 
@@ -168,7 +166,25 @@ const TaskEdit = () => {
               }
             />
           </div>
+          <div className="flex justify-between">
+            <div className="flex gap-4">
+              <RepeatOptions
+                toDate={newTask.toDate}
+                setToDate={(val: Date) =>
+                  setNewTask({ ...newTask, toDate: val })
+                }
+              />
+              <CategoriesSelector
+                categories={filterExistingCategories()}
+                categoriesHandler={categoriesHandler}
+                selectedCategories={selectedCategories}
+              />
+            </div>
 
+            <div className="flex gap-4">
+              <TaskPriorityPicker />
+            </div>
+          </div>
           <div className="flex flex-col">
             <Label>Task categories</Label>
             <LabelSubtitle text="These categories are already associated with this task" />
@@ -218,25 +234,12 @@ const TaskEdit = () => {
                 />
               ))}
           </div>
-          <div className="flex justify-between">
-            <div className="flex gap-4">
-              <RepeatOptions />
-              <CategoriesSelector
-                categories={categories}
-                categoriesHandler={categoriesHandler}
-                selectedCategories={selectedCategories}
-              />
-            </div>
 
-            <div className="flex gap-4">
-              <TaskPriorityPicker />
-            </div>
-          </div>
-          <hr className="mt-4" />
+          <hr />
 
           <CheckBox
             name="incomplete"
-            checked={newTask.incomplete || false}
+            checked={newTask.incomplete}
             changeHandler={checkIncomplete}
             label="Mark as incomplete"
           />
@@ -247,6 +250,14 @@ const TaskEdit = () => {
             </Link>
             <Button>Update task</Button>
           </div>
+
+          <input
+            type="text"
+            hidden
+            readOnly
+            value={newTask.toDate}
+            name="toDate"
+          />
         </Form>
       </Main>
     </Wrapper>
