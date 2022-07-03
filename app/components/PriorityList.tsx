@@ -4,11 +4,18 @@ import { faCheck, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RadioGroup } from "@headlessui/react";
 
+export enum Priority {
+  PRIORITY1 = "priority1",
+  PRIORITY2 = "priority2",
+  PRIORITY3 = "priority3",
+  PRIORITY4 = "priority4",
+}
+
 const priorities: { label: string; value: string; icon: React.ReactElement }[] =
   [
     {
       label: "Priority 1",
-      value: "priority1",
+      value: Priority.PRIORITY1,
       icon: (
         <FontAwesomeIcon
           icon={faFlag}
@@ -19,7 +26,7 @@ const priorities: { label: string; value: string; icon: React.ReactElement }[] =
     },
     {
       label: "Priority 2",
-      value: "priority2",
+      value: Priority.PRIORITY2,
       icon: (
         <FontAwesomeIcon
           icon={faFlag}
@@ -30,7 +37,7 @@ const priorities: { label: string; value: string; icon: React.ReactElement }[] =
     },
     {
       label: "Priority 3",
-      value: "priority3",
+      value: Priority.PRIORITY3,
       icon: (
         <FontAwesomeIcon
           icon={faFlag}
@@ -41,7 +48,7 @@ const priorities: { label: string; value: string; icon: React.ReactElement }[] =
     },
     {
       label: "Priority 4",
-      value: "priority4",
+      value: Priority.PRIORITY4,
       icon: (
         <FontAwesomeIcon
           icon={faFlag}
@@ -52,11 +59,13 @@ const priorities: { label: string; value: string; icon: React.ReactElement }[] =
     },
   ];
 
-const PriorityList = () => {
-  let [plan, setPlan] = useState("priority4");
-
+const PriorityList = ({ currentPriority, setPriority }) => {
   return (
-    <RadioGroup value={plan} onChange={setPlan} className="flex flex-col gap-4">
+    <RadioGroup
+      value={currentPriority}
+      onChange={setPriority}
+      className="flex flex-col gap-4"
+    >
       {priorities.map((p) => (
         <RadioGroup.Option key={p.value} value={p.value} className="w-full">
           {({ checked }) => (

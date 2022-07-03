@@ -66,7 +66,8 @@ export function createTask({
   fromDate,
   toDate,
   categories,
-}: Pick<Task, "notes" | "title" | "fromDate" | "toDate"> & {
+  priority,
+}: Pick<Task, "notes" | "title" | "fromDate" | "toDate" | "priority"> & {
   userId: User["id"];
   categories?: string;
 }) {
@@ -76,6 +77,7 @@ export function createTask({
       notes,
       fromDate,
       toDate,
+      priority,
       user: {
         connect: {
           id: userId,
@@ -107,9 +109,12 @@ export async function updateTask({
   fromDate,
   toDate,
   incomplete,
+  priority,
 }: Partial<Task> & {
   userId: User["id"];
 }) {
+  console.log(priority);
+
   return prisma.task.updateMany({
     data: {
       done: done == true,
@@ -117,6 +122,7 @@ export async function updateTask({
       notes,
       fromDate,
       toDate,
+      priority,
       incomplete: incomplete == true,
     },
     where: {
