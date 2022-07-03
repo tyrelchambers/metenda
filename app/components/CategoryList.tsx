@@ -26,7 +26,7 @@ const CategoryList = ({ category }: { category: Category }) => {
               className="text-gray-500 transition-all hover:text-red-500"
             />
           </button>
-          <input type="text" hidden name="id" value={category.id} />
+          <input type="text" hidden name="id" value={category.id} readOnly />
         </Form>
       </div>
     </li>

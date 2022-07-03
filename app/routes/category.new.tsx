@@ -1,6 +1,7 @@
 import { ActionFunction, redirect } from "@remix-run/server-runtime";
 import { getCommonFormData, useUser } from "~/utils";
 
+import { Heading } from "~/components/Heading";
 import Main from "~/layout/Main";
 import NewCategoryForm from "~/forms/NewCategoryForm";
 import Wrapper from "~/layout/Wrapper";
@@ -49,9 +50,7 @@ const Category = () => {
   return (
     <Wrapper>
       <Main>
-        <h1 className="text-3xl font-bold text-gray-800">
-          Create a new category
-        </h1>
+        <Heading type="h1">Create a new category</Heading>
 
         <NewCategoryForm handleSubmit={handleSubmit} />
       </Main>

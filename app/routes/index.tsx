@@ -1,4 +1,5 @@
 import { Button } from "~/components/Button";
+import { Heading } from "~/components/Heading";
 import { Link } from "@remix-run/react";
 import appSS from "public/assets/appSS.png";
 import bg from "public/assets/bg.svg";
@@ -16,10 +17,10 @@ export default function Index() {
       />
       <section className="relative z-10 mt-40 mb-40 ml-auto mr-auto flex  w-full max-w-4xl items-center p-10">
         <div className="flex flex-col items-center gap-10">
-          <h1 className="text-7xl font-bold text-gray-800">
-            Plan. <span className="text-indigo-500">Act.</span>{" "}
+          <Heading type="h1">
+            Plan. <span className="text-indigo-500">Act.</span>
             <span className="underline">Succeed.</span>
-          </h1>
+          </Heading>
           <p className=" text-xl font-thin leading-normal text-gray-600">
             <span className="font-bold">Metenda</span> is a week-by-week
             planner. No more individual days to worry about. Plan your tasks on

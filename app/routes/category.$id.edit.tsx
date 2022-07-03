@@ -12,6 +12,7 @@ import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
 import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Heading } from "~/components/Heading";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
 import Main from "~/layout/Main";
@@ -57,7 +58,7 @@ const CategoryEdit = () => {
   return (
     <Wrapper>
       <Main>
-        <h1 className="text-3xl font-bold text-gray-800">Edit your category</h1>
+        <Heading type="h1">Edit your category</Heading>
         <Form className="flex flex-col gap-4" method="patch">
           <div className="flex flex-col">
             <Label htmlFor="title">Title</Label>

@@ -1,6 +1,7 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { deleteTask, getAllTasks, updateTask } from "~/models/task.server";
 
+import { Heading } from "~/components/Heading";
 import Main from "~/layout/Main";
 import React from "react";
 import { Task } from "@prisma/client";
@@ -21,9 +22,7 @@ const Tasks = () => {
   return (
     <Wrapper>
       <Main>
-        <h1 className="mb-6 text-3xl font-bold text-gray-800">
-          All of your weekly tasks
-        </h1>
+        <Heading type="h1">All of your weekly tasks</Heading>
         <ul>
           {tasks.map((task: Task) => (
             <TaskList task={task} key={task.id} redirectTo="/tasks" />

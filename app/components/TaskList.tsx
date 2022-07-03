@@ -26,18 +26,6 @@ const TaskList = ({
     );
   };
 
-  const markAsIncomplete = (incomplete: boolean) => {
-    fetcher.submit(
-      {
-        id: task.id,
-        incomplete: String(incomplete),
-        type: "markAsIncomplete",
-        redirectTo,
-      },
-      { method: "post", action: `/task/${task.id}/edit` }
-    );
-  };
-
   return (
     <li className="flex  items-start gap-2 border-b-[1px] border-b-gray-200 py-4">
       <CheckBox

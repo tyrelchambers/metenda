@@ -7,6 +7,7 @@ import { deleteCategory, getAllCategories } from "~/models/category.server";
 
 import type { Category } from "@prisma/client";
 import CategoryList from "~/components/CategoryList";
+import { Heading } from "~/components/Heading";
 import Main from "~/layout/Main";
 import React from "react";
 import Wrapper from "~/layout/Wrapper";
@@ -38,9 +39,7 @@ const Categories = () => {
   return (
     <Wrapper>
       <Main>
-        <h1 className="text-3xl font-bold text-gray-800">
-          All your categories
-        </h1>
+        <Heading type="h1">All your categories</Heading>
         {categories.length === 0 && (
           <p className="text-sm italic text-gray-500">You have no categories</p>
         )}

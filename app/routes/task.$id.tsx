@@ -8,6 +8,7 @@ import { format, parseISO } from "date-fns";
 
 import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Heading } from "~/components/Heading";
 import Link from "~/components/Link";
 import type { LoaderFunction } from "@remix-run/server-runtime";
 import Main from "~/layout/Main";
@@ -34,7 +35,7 @@ const ItemId = () => {
         <div className="flex flex-col">
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-gray-800">{task.title}</h1>
+              <Heading type="h1">{task.title}</Heading>
 
               <Link
                 to={`/task/${task.id}/edit`}

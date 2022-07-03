@@ -17,6 +17,7 @@ import {
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import CheckBox from "~/components/CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Heading } from "~/components/Heading";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
 import LabelSubtitle from "~/components/LabelSubtitle";
@@ -136,9 +137,7 @@ const TaskEdit = () => {
   return (
     <Wrapper>
       <Main>
-        <h1 className="text-3xl font-bold text-gray-800">
-          Editing: {task.title}
-        </h1>
+        <Heading type="h1">Editing: {task.title}</Heading>
         <Form className="flex flex-col gap-8" method="patch">
           <div className="flex flex-col">
             <Label htmlFor="title">Title</Label>

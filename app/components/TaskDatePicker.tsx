@@ -21,7 +21,7 @@ const TaskDatePicker = ({ task, taskHandler }: Props) => {
       <div className="mt-2 grid grid-cols-2 gap-6">
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DatePicker
-            label="From"
+            label="From week of"
             value={task.fromDate}
             onChange={(newValue) => {
               taskHandler({
@@ -35,7 +35,7 @@ const TaskDatePicker = ({ task, taskHandler }: Props) => {
 
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DatePicker
-            label="To"
+            label="To week of"
             value={task.toDate}
             onChange={(newValue) => {
               taskHandler({

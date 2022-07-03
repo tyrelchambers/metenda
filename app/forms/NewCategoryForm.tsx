@@ -10,7 +10,7 @@ import { useState } from "react";
 
 interface Props {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  redirectTo: string;
+  redirectTo?: string;
 }
 
 const NewCategoryForm = ({ handleSubmit, redirectTo }: Props) => {

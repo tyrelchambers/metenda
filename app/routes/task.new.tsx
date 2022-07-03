@@ -10,6 +10,7 @@ import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Heading } from "~/components/Heading";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
 import LabelSubtitle from "~/components/LabelSubtitle";
@@ -108,7 +109,8 @@ const NewItem = () => {
   return (
     <Wrapper>
       <Main>
-        <h1 className="text-3xl font-bold text-gray-800">Create a new task</h1>
+        <Heading type="h1">Create a new task</Heading>
+
         <fetcher.Form className="flex flex-col gap-8">
           <div className="flex flex-col">
             <Label htmlFor="title">Title</Label>
@@ -154,7 +156,11 @@ const NewItem = () => {
                   onClick={() => modalState.open()}
                   className="text-indigo-500"
                 >
-                  <FontAwesomeIcon icon={faPlus} className="mr-4" />
+                  <FontAwesomeIcon
+                    icon={faPlus}
+                    className="mr-4"
+                    style={{ width: "14px" }}
+                  />
                   Create category
                 </button>
               </div>
