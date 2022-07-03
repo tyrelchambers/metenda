@@ -3,12 +3,12 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/server-runtime";
-import { addWeeks, endOfWeek, startOfWeek } from "date-fns";
+import { endOfWeek, startOfWeek } from "date-fns";
 import { getCommonFormData, useUser } from "~/utils";
 import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { Button } from "~/components/Button";
-import { Category } from "@prisma/client";
+import CategoriesSelector from "~/components/CategoriesSelector";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Heading } from "~/components/Heading";
 import Input from "~/components/Input";
@@ -16,13 +16,13 @@ import Label from "~/components/Label";
 import LabelSubtitle from "~/components/LabelSubtitle";
 import Main from "~/layout/Main";
 import Modal from "~/components/Modal";
-import { MultiSelect } from "@mantine/core";
 import NewCategoryForm from "~/forms/NewCategoryForm";
-import TaskDatePicker from "~/components/TaskDatePicker";
+import RepeatOptions from "~/components/RepeatOptions";
+import TaskPriorityPicker from "~/components/TaskPriorityPicker";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { createTask } from "~/models/task.server";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faFlag } from "@fortawesome/free-regular-svg-icons";
 import { getAllCategories } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
 import { useModal } from "~/stores/useModal";
@@ -139,51 +139,22 @@ const NewItem = () => {
               id="notes"
             />
           </div>
-
-          <TaskDatePicker task={newTask} taskHandler={setNewTask} />
-
-          <div className="flex flex-col">
-            <div className="flex-center flex justify-between">
-              <Label
-                htmlFor="categoryies"
-                className="flex items-center justify-between"
-              >
-                Categories
-              </Label>
-              <div className="w-fit">
-                <button
-                  type="button"
-                  onClick={() => modalState.open()}
-                  className="text-indigo-500"
-                >
-                  <FontAwesomeIcon
-                    icon={faPlus}
-                    className="mr-4"
-                    style={{ width: "14px" }}
-                  />
-                  Create category
-                </button>
-              </div>
-            </div>
-            {categories.length === 0 && (
-              <p className="text-sm italic text-gray-400">
-                There aren't any categories. You can create one.
-              </p>
-            )}
-            {categories.length > 0 && (
-              <MultiSelect
-                data={categories.map((c: Category) => ({
-                  value: c.id,
-                  label: c.title,
-                }))}
-                placeholder="Pick your categories"
-                onChange={(e) => categoriesHandler(e)}
-                className="mt-2"
+          <div className="flex justify-between">
+            <div className="flex gap-4">
+              <RepeatOptions />
+              <CategoriesSelector
+                categories={categories}
+                categoriesHandler={categoriesHandler}
+                selectedCategories={selectedCategories}
               />
-            )}
+            </div>
+
+            <div className="flex gap-4">
+              <TaskPriorityPicker />
+            </div>
           </div>
 
-          <hr className="mt-4 mb-4" />
+          <hr />
 
           <div className="flex items-center gap-4">
             <Button variant="secondary" onClick={() => navigate("/agenda")}>
@@ -193,6 +164,7 @@ const NewItem = () => {
           </div>
         </fetcher.Form>
       </Main>
+
       <Modal
         title="Create a category"
         description="This will quickly create a new category to associate with your task"
