@@ -141,7 +141,12 @@ const NewItem = () => {
           </div>
           <div className="flex justify-between">
             <div className="flex gap-4">
-              <RepeatOptions />
+              <RepeatOptions
+                toDate={newTask.toDate}
+                setToDate={(val: Date) =>
+                  setNewTask({ ...newTask, toDate: val })
+                }
+              />
               <CategoriesSelector
                 categories={categories}
                 categoriesHandler={categoriesHandler}

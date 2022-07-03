@@ -48,8 +48,8 @@ const CategoriesSelector = ({
       </div>
 
       {categories.length === 0 && (
-        <p className="text-sm italic text-gray-400">
-          There aren't any categories. You can create one.
+        <p className="mt-4 text-sm italic text-gray-400">
+          There aren't any categories, but you can create one.
         </p>
       )}
       {categories.length > 0 && (
