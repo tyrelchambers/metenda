@@ -1,5 +1,6 @@
 import CategoryPill, { CategoryPillSize } from "./CategoryPill";
 import { Link, useFetcher } from "@remix-run/react";
+import { faClock, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { format, parseISO } from "date-fns";
 
 import CheckBox from "./CheckBox";
@@ -7,7 +8,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Task } from "@prisma/client";
 import TaskListItemActions from "./TaskListItemActions";
 import TaskStatus from "./TaskStatus";
-import { faFlag } from "@fortawesome/free-solid-svg-icons";
 import { taskStatus } from "~/utils";
 
 const TaskList = ({
@@ -28,8 +28,13 @@ const TaskList = ({
 
   const markAsIncomplete = (incomplete: boolean) => {
     fetcher.submit(
-      { id: task.id, incomplete: String(incomplete), type: "markAsIncomplete" },
-      { method: "post" }
+      {
+        id: task.id,
+        incomplete: String(incomplete),
+        type: "markAsIncomplete",
+        redirectTo,
+      },
+      { method: "post", action: `/task/${task.id}/edit` }
     );
   };
 
@@ -58,7 +63,7 @@ const TaskList = ({
         <div className="flex rounded-lg py-2">
           <span className="flex gap-2">
             <FontAwesomeIcon
-              icon={faFlag}
+              icon={faClock}
               style={{ width: "10px" }}
               className="text-gray-400"
             />
@@ -77,11 +82,7 @@ const TaskList = ({
         </ul>
       </div>
 
-      <TaskListItemActions
-        task={task}
-        markAsIncomplete={() => markAsIncomplete(!task.incomplete)}
-        redirectTo={redirectTo}
-      />
+      <TaskListItemActions task={task} redirectTo={redirectTo} />
     </li>
   );
 };

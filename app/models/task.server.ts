@@ -111,14 +111,17 @@ export async function updateTask({
   userId: User["id"];
 }) {
   return prisma.task.updateMany({
-    where: { id, userId },
     data: {
-      done: done === "true",
+      done: done == true,
       title,
       notes,
       fromDate,
       toDate,
-      incomplete: incomplete === "true",
+      incomplete: incomplete == true,
+    },
+    where: {
+      id,
+      userId,
     },
   });
 }

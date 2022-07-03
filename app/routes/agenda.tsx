@@ -1,15 +1,14 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
-import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { currentDay, getCommonFormData } from "~/utils";
+import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
+import { format, isAfter, isBefore, isEqual, startOfDay } from "date-fns";
 import {
-  deleteTask,
   getAllTasks,
   totalCompletedTasksCount,
   totalTasksCount,
   updateTask,
 } from "~/models/task.server";
-import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
-import { format, isAfter, isBefore, isEqual, startOfDay } from "date-fns";
 
 import { Button } from "~/components/Button";
 import Calendar from "react-calendar";
@@ -21,7 +20,6 @@ import Wrapper from "~/layout/Wrapper";
 import { getAllCategories } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
 import { useCurrentWeek } from "~/hooks/useCurrentWeek";
-import { useEffect } from "react";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
@@ -73,16 +71,9 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const Agenda = () => {
-  const navigate = useNavigate();
   const { tasks, categories } = useLoaderData();
   const { startOfWeek, endOfWeek, nextWeek, previousWeek } =
     useCurrentWeek(currentDay);
-
-  useEffect(() => {
-    navigate({
-      search: `?startOfWeek=${startOfWeek.toISOString()}&endOfWeek=${endOfWeek.toISOString()}`,
-    });
-  }, [startOfWeek, endOfWeek, navigate]);
 
   const nextWeekHandler = () => {
     nextWeek();
@@ -134,7 +125,7 @@ const Agenda = () => {
                   </li>
                 )}
                 {tasks.map((task) => (
-                  <TaskList task={task} key={task.id} />
+                  <TaskList task={task} key={task.id} redirectTo="/agenda" />
                 ))}
               </ul>
             </div>

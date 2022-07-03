@@ -48,7 +48,6 @@ async function seed() {
         title: `My ${index} category`,
         userId: user.id,
         color: faker.internet.color(),
-        textColor: faker.internet.color(),
       },
     });
   }

@@ -7,21 +7,12 @@ import { Task } from "@prisma/client";
 
 interface Props {
   task: Task;
-  markAsIncomplete: () => void;
   redirectTo?: string;
 }
 
-const TaskListItemActions = ({ task, markAsIncomplete, redirectTo }: Props) => {
+const TaskListItemActions = ({ task, redirectTo }: Props) => {
   return (
     <div className="flex items-center gap-4">
-      <FontAwesomeIcon
-        icon={faTimes}
-        className="text-red-300"
-        title="Mark as incomplete"
-        style={{ width: "13px" }}
-        onClick={markAsIncomplete}
-      />
-      <span className="h-4 w-[1px] bg-gray-400"></span>
       <Link to={`/task/${task.id}/edit`}>
         <FontAwesomeIcon
           icon={faPencil}

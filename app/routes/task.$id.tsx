@@ -1,4 +1,9 @@
-import { faFlag, faTag } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRightLong,
+  faClock,
+  faFlag,
+  faTag,
+} from "@fortawesome/free-solid-svg-icons";
 import { format, parseISO } from "date-fns";
 
 import CategoryPill from "~/components/CategoryPill";
@@ -41,18 +46,30 @@ const ItemId = () => {
             <div className=" mt-4 mb-4 flex items-center gap-6">
               <p className="flex items-center gap-2 text-indigo-500">
                 <FontAwesomeIcon
-                  icon={faFlag}
+                  icon={faClock}
                   style={{ width: "10px" }}
                   className="text-indigo-700"
                 />
                 {format(parseISO(task.fromDate), "MMMM do, yyyy")}
               </p>
+
               {task.toDate && (
                 <>
-                  <hr className="flex-1" />
-                  <p className="text-indigo-500">
-                    {format(parseISO(task.toDate), "MMMM do, yyyy")}
-                  </p>
+                  <FontAwesomeIcon
+                    icon={faArrowRightLong}
+                    className="text-indigo-700"
+                    style={{ width: "20px" }}
+                  />
+                  <span className="flex items-center gap-2">
+                    <FontAwesomeIcon
+                      icon={faClock}
+                      style={{ width: "10px" }}
+                      className="text-indigo-700"
+                    />
+                    <p className="text-indigo-500">
+                      {format(parseISO(task.toDate), "MMMM do, yyyy")}
+                    </p>
+                  </span>
                 </>
               )}
             </div>

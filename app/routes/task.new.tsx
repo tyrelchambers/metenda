@@ -3,14 +3,13 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/server-runtime";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { addWeeks, endOfWeek, startOfWeek } from "date-fns";
 import { getCommonFormData, useUser } from "~/utils";
 import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
 import LabelSubtitle from "~/components/LabelSubtitle";
@@ -18,10 +17,11 @@ import Main from "~/layout/Main";
 import Modal from "~/components/Modal";
 import { MultiSelect } from "@mantine/core";
 import NewCategoryForm from "~/forms/NewCategoryForm";
-import { TextField } from "@mui/material";
+import TaskDatePicker from "~/components/TaskDatePicker";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { createTask } from "~/models/task.server";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { getAllCategories } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
 import { useModal } from "~/stores/useModal";
@@ -52,13 +52,11 @@ export const action: ActionFunction = async ({ request }) => {
     title,
     notes,
     fromDate: startOfWeek(new Date(fromDate)).toISOString(),
-    toDate: toDate
-      ? endOfWeek(new Date(toDate)).toISOString()
-      : endOfWeek(addWeeks(fromDate, 1)).toISOString(),
+    toDate: toDate && endOfWeek(new Date(toDate)).toISOString(),
     categories,
   });
 
-  return redirect("/task/new");
+  return redirect("/task/");
 };
 
 const NewItem = () => {
@@ -139,70 +137,28 @@ const NewItem = () => {
               id="notes"
             />
           </div>
-          <div className="flex flex-col">
-            <Label>Repeat</Label>
-            <LabelSubtitle text="When would you like this task to run until?" />
-            <label className="mb-6 mt-2  text-sm text-gray-600">
-              <input
-                type="checkbox"
-                name="willRepeat"
-                checked={newTask.willRepeatEveryWeek}
-                onChange={(e) =>
-                  setNewTask({
-                    ...newTask,
-                    willRepeatEveryWeek: e.target.checked,
-                  })
-                }
-                className="mr-2"
-              />
-              Every week
-            </label>
-            <div className="grid grid-cols-2 gap-6">
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="From week of"
-                  value={newTask.fromDate}
-                  onChange={(newValue) => {
-                    setNewTask({
-                      ...newTask,
-                      fromDate: newValue?.toISOString(),
-                    });
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
 
-              {!newTask.willRepeatEveryWeek && (
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="To week of"
-                    value={newTask.toDate}
-                    onChange={(newValue) => {
-                      setNewTask({
-                        ...newTask,
-                        toDate: newValue?.toISOString(),
-                      });
-                    }}
-                    minDate={newTask.fromDate}
-                    renderInput={(params) => <TextField {...params} />}
-                  />
-                </LocalizationProvider>
-              )}
-            </div>
-          </div>
+          <TaskDatePicker task={newTask} taskHandler={setNewTask} />
 
           <div className="flex flex-col">
-            <Label
-              htmlFor="categoryies"
-              className="flex items-center justify-between"
-            >
-              Categories
+            <div className="flex-center flex justify-between">
+              <Label
+                htmlFor="categoryies"
+                className="flex items-center justify-between"
+              >
+                Categories
+              </Label>
               <div className="w-fit">
-                <Button variant="secondary" onClick={() => modalState.open()}>
+                <button
+                  type="button"
+                  onClick={() => modalState.open()}
+                  className="text-indigo-500"
+                >
+                  <FontAwesomeIcon icon={faPlus} className="mr-4" />
                   Create category
-                </Button>
+                </button>
               </div>
-            </Label>
+            </div>
             {categories.length === 0 && (
               <p className="text-sm italic text-gray-400">
                 There aren't any categories. You can create one.

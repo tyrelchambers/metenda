@@ -1,18 +1,15 @@
 import { Category, Task } from "@prisma/client";
 
-import { TaskRepeatDetails } from "~/types";
 import { currentDay } from "~/utils";
 import { useState } from "react";
 
 export const useTask = (task?: Task) => {
-  const [newTask, setNewTask] = useState<
-    Partial<Task & TaskRepeatDetails> | Task
-  >(
+  const [newTask, setNewTask] = useState<Partial<Task>>(
     task || {
       title: "",
       notes: "",
       fromDate: currentDay,
-      toDate: currentDay,
+      toDate: null,
     }
   );
 
@@ -25,7 +22,7 @@ export const useTask = (task?: Task) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories(selectedCategories.filter((c) => c !== category));
     } else {
-      setSelectedCategories([...selectedCategories, category]);
+      setSelectedCategories([...category]);
     }
   };
 

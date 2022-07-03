@@ -18,8 +18,6 @@ export const action: ActionFunction = async ({ request }) => {
   await createCategory({ userId, title, color });
 
   if (redirectTo) {
-    console.log("redirecting to", redirectTo);
-
     return redirect(redirectTo);
   }
 
