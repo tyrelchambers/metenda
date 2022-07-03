@@ -3,13 +3,12 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/server-runtime";
-import { addWeeks, endOfWeek, startOfWeek } from "date-fns";
+import { endOfWeek, startOfWeek } from "date-fns";
 import { getCommonFormData, useUser } from "~/utils";
 import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { Button } from "~/components/Button";
 import CategoriesSelector from "~/components/CategoriesSelector";
-import { Category } from "@prisma/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Heading } from "~/components/Heading";
 import Input from "~/components/Input";
@@ -17,15 +16,13 @@ import Label from "~/components/Label";
 import LabelSubtitle from "~/components/LabelSubtitle";
 import Main from "~/layout/Main";
 import Modal from "~/components/Modal";
-import { MultiSelect } from "@mantine/core";
 import NewCategoryForm from "~/forms/NewCategoryForm";
-import { Popover } from "@headlessui/react";
 import RepeatOptions from "~/components/RepeatOptions";
-import TaskDatePicker from "~/components/TaskDatePicker";
+import TaskPriorityPicker from "~/components/TaskPriorityPicker";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { createTask } from "~/models/task.server";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faFlag } from "@fortawesome/free-regular-svg-icons";
 import { getAllCategories } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
 import { useModal } from "~/stores/useModal";
@@ -142,13 +139,19 @@ const NewItem = () => {
               id="notes"
             />
           </div>
-          <div className="flex gap-4">
-            <RepeatOptions />
-            <CategoriesSelector
-              categories={categories}
-              categoriesHandler={categoriesHandler}
-              selectedCategories={selectedCategories}
-            />
+          <div className="flex justify-between">
+            <div className="flex gap-4">
+              <RepeatOptions />
+              <CategoriesSelector
+                categories={categories}
+                categoriesHandler={categoriesHandler}
+                selectedCategories={selectedCategories}
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <TaskPriorityPicker />
+            </div>
           </div>
 
           <hr />

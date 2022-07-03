@@ -17,14 +17,14 @@ const CategoriesSelector = ({
   return (
     <Popover
       triggerLabel={
-        <>
+        <div className="rounded-lg border-[1px] border-gray-200 bg-gray-100 py-1 px-3">
           <FontAwesomeIcon
             icon={faCalendarDay}
             className="mr-2"
             style={{ width: "18px" }}
           />
           Categories
-        </>
+        </div>
       }
     >
       <div className="flex justify-between">
