@@ -22,7 +22,7 @@ const TaskList = ({
   const onChangeHandler = (checked: boolean) => {
     fetcher.submit(
       { id: task.id, done: String(checked), type: "toggleDone" },
-      { method: "post" }
+      { method: "post", action: "/agenda" }
     );
   };
 
