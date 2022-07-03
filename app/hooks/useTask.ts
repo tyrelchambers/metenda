@@ -9,7 +9,7 @@ export const useTask = (task?: Task) => {
       title: "",
       notes: "",
       fromDate: currentDay,
-      toDate: currentDay,
+      toDate: null,
     }
   );
 

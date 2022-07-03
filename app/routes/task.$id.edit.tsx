@@ -6,7 +6,7 @@ import {
 import { Button, SecondaryButtonStyles } from "~/components/Button";
 import { Category, Task } from "@prisma/client";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { Form, Link, useLoaderData, useTransition } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import {
   createCategoryOnTask,
   deleteCategoryOnTask,
@@ -111,7 +111,6 @@ const TaskEdit = () => {
   const { newTask, setNewTask, categoriesHandler, selectedCategories } =
     useTask(task);
   const taskCategoriesCopy = [...task.categories];
-  const transition = useTransition();
 
   const deleteHandler = (categoryId: string) => {
     setNewTask({
@@ -295,11 +294,7 @@ const TaskEdit = () => {
             <Link className={SecondaryButtonStyles} to={`/agenda`}>
               Discard
             </Link>
-            <Button transitioning={transition.state === "submitting"}>
-              {transition.state === "submitting"
-                ? "Updating task..."
-                : "Update task"}
-            </Button>
+            <Button>Update task</Button>
           </div>
         </Form>
       </Main>

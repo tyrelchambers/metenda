@@ -3,7 +3,7 @@ interface IButton {
   children: JSX.Element | string;
   [x: string]: any;
   transitionLabel?: string;
-  transitioning: boolean;
+  transitioning?: boolean;
 }
 
 export const PrimaryButtonStyles = `flex h-[40px] min-w-fit items-center justify-center rounded-lg bg-indigo-500 px-6 text-sm text-white transition-all hover:bg-indigo-600`;
