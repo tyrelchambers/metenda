@@ -1,4 +1,6 @@
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+// import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+
+import { DatePicker, DateRangePicker } from "@mantine/dates";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import Label from "./Label";
@@ -12,41 +14,14 @@ interface Props {
   taskHandler: (task: Task) => void;
 }
 
-const TaskDatePicker = ({ task, taskHandler }: Props) => {
+const TaskDatePicker = () => {
   return (
-    <div className="flex flex-col">
-      <Label>Repeat</Label>
-      <LabelSubtitle text="When would you like this task to run until? Leave the second date empty to repeat every week." />
-
-      <div className="mt-2 grid grid-cols-2 gap-6">
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
-            label="From week of"
-            value={task.fromDate}
-            onChange={(newValue) => {
-              taskHandler({
-                ...task,
-                fromDate: newValue?.toISOString(),
-              });
-            }}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
-
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
-            label="To week of"
-            value={task.toDate}
-            onChange={(newValue) => {
-              taskHandler({
-                ...task,
-                toDate: newValue?.toISOString(),
-              });
-            }}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
-      </div>
+    <div className="flex flex-col gap-2">
+      <DatePicker
+        placeholder="Pick date"
+        label="To week of"
+        withinPortal={false}
+      />
     </div>
   );
 };
