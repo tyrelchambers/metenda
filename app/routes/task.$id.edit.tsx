@@ -15,6 +15,7 @@ import {
 } from "~/models/task.server";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import CategoriesSelector from "~/components/CategoriesSelector";
 import CheckBox from "~/components/CheckBox";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Heading } from "~/components/Heading";
@@ -23,6 +24,8 @@ import Label from "~/components/Label";
 import LabelSubtitle from "~/components/LabelSubtitle";
 import Main from "~/layout/Main";
 import { MultiSelect } from "@mantine/core";
+import RepeatOptions from "~/components/RepeatOptions";
+import TaskPriorityPicker from "~/components/TaskPriorityPicker";
 import { TextField } from "@mui/material";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
@@ -215,70 +218,19 @@ const TaskEdit = () => {
                 />
               ))}
           </div>
-          <div className="flex flex-col">
-            <Label>Repeat</Label>
-            <LabelSubtitle text="When would you like this task to run until? Leave the second date empty to repeat every week." />
-
-            <div className="mt-2 grid grid-cols-2 gap-6">
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="From"
-                  value={newTask.fromDate}
-                  onChange={(newValue) => {
-                    setNewTask({
-                      ...newTask,
-                      fromDate: newValue?.toISOString(),
-                    });
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="To"
-                  value={newTask.toDate}
-                  onChange={(newValue) => {
-                    setNewTask({
-                      ...newTask,
-                      toDate: newValue?.toISOString(),
-                    });
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <Label htmlFor="categoryies">Add categories</Label>
-            {filterExistingCategories().length === 0 && (
-              <p className="text-sm font-thin italic text-gray-500">
-                There aren't any categories available to add to this task
-              </p>
-            )}
-            {filterExistingCategories().length > 0 && (
-              <MultiSelect
-                data={filterExistingCategories().map((c: Category) => ({
-                  value: c.id,
-                  label: c.title,
-                }))}
-                placeholder="Pick your categories"
-                onChange={(e) => categoriesHandler(e)}
+          <div className="flex justify-between">
+            <div className="flex gap-4">
+              <RepeatOptions />
+              <CategoriesSelector
+                categories={categories}
+                categoriesHandler={categoriesHandler}
+                selectedCategories={selectedCategories}
               />
-            )}
+            </div>
 
-            {!!selectedCategories.length &&
-              selectedCategories.map((c) => (
-                <input
-                  key={c}
-                  type="text"
-                  hidden
-                  readOnly
-                  value={c}
-                  name="newCategory"
-                />
-              ))}
+            <div className="flex gap-4">
+              <TaskPriorityPicker />
+            </div>
           </div>
           <hr className="mt-4" />
 
