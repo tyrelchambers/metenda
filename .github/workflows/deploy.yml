@@ -26,6 +26,8 @@ jobs:
           node-version: 16
 
       - name: 📥 Download deps
+        env:
+          FONTAWESOME_NPM_AUTH_TOKEN: ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false
