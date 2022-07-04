@@ -11,3 +11,7 @@ html {
   height: 100vh;
   overflow: auto;
 }
+
+.mantine-Tooltip-root {
+  background-color: white;
+}

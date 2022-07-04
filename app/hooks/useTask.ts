@@ -1,5 +1,6 @@
 import { Category, Task } from "@prisma/client";
 
+import { Priority } from "~/components/PriorityList";
 import { currentDay } from "~/utils";
 import { useState } from "react";
 
@@ -10,6 +11,7 @@ export const useTask = (task?: Task) => {
       notes: "",
       fromDate: currentDay,
       toDate: null,
+      priority: Priority.PRIORITY4,
     }
   );
 

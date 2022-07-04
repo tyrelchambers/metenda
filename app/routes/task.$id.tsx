@@ -17,6 +17,7 @@ import { SecondaryButtonStyles } from "~/components/Button";
 import type { Task } from "@prisma/client";
 import Wrapper from "~/layout/Wrapper";
 import { getTaskById } from "~/models/task.server";
+import { priorities } from "~/constants";
 import { requireUserId } from "~/session.server";
 import { useLoaderData } from "@remix-run/react";
 
@@ -35,7 +36,10 @@ const ItemId = () => {
         <div className="flex flex-col">
           <div className="flex flex-col">
             <div className="flex items-center justify-between">
-              <Heading type="h1">{task.title}</Heading>
+              <div className="flex items-center gap-4">
+                {priorities[task.priority].icon}
+                <Heading type="h1">{task.title}</Heading>
+              </div>
 
               <Link
                 to={`/task/${task.id}/edit`}

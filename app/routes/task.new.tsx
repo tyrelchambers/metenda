@@ -9,7 +9,6 @@ import { useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 
 import { Button } from "~/components/Button";
 import CategoriesSelector from "~/components/CategoriesSelector";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Heading } from "~/components/Heading";
 import Input from "~/components/Input";
 import Label from "~/components/Label";
@@ -22,7 +21,6 @@ import TaskPriorityPicker from "~/components/TaskPriorityPicker";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { createTask } from "~/models/task.server";
-import { faFlag } from "@fortawesome/free-regular-svg-icons";
 import { getAllCategories } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
 import { useModal } from "~/stores/useModal";
@@ -39,12 +37,10 @@ export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
 
   const formData = await request.formData();
-  const { title, notes, fromDate, toDate } = await getCommonFormData(formData, [
-    "title",
-    "notes",
-    "fromDate",
-    "toDate",
-  ]);
+  const { title, notes, fromDate, toDate, priority } = await getCommonFormData(
+    formData,
+    ["title", "notes", "fromDate", "toDate", "priority"]
+  );
 
   const categories = formData.get("categories");
 
@@ -52,6 +48,7 @@ export const action: ActionFunction = async ({ request }) => {
     userId,
     title,
     notes,
+    priority,
     fromDate: startOfWeek(new Date(fromDate)).toISOString(),
     toDate: toDate && endOfWeek(new Date(toDate)).toISOString(),
     categories,
@@ -153,9 +150,11 @@ const NewItem = () => {
                 selectedCategories={selectedCategories}
               />
             </div>
-
             <div className="flex gap-4">
-              <TaskPriorityPicker />
+              <TaskPriorityPicker
+                currentPriority={newTask.priority}
+                setPriority={(val) => setNewTask({ ...newTask, priority: val })}
+              />
             </div>
           </div>
 

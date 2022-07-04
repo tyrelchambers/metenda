@@ -4,7 +4,7 @@ import PriorityList from "./PriorityList";
 import React from "react";
 import { faFlag } from "@fortawesome/free-regular-svg-icons";
 
-const TaskPriorityPicker = () => {
+const TaskPriorityPicker = ({ currentPriority, setPriority }) => {
   return (
     <Popover
       placement="end"
@@ -16,7 +16,10 @@ const TaskPriorityPicker = () => {
         />
       }
     >
-      <PriorityList />
+      <PriorityList
+        currentPriority={currentPriority}
+        setPriority={setPriority}
+      />
     </Popover>
   );
 };

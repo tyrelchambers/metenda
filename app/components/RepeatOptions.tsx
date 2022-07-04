@@ -52,7 +52,7 @@ const RepeatOptions = ({
           placeholder="Pick date"
           label="To week of"
           withinPortal={false}
-          value={toDate ? new Date(toDate) : null}
+          value={toDate ? new Date(toDate) : undefined}
           onChange={setToDate}
           minDate={startOfWeek}
         />

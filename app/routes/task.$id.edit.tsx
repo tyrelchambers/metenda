@@ -49,18 +49,16 @@ export const action: ActionFunction = async ({ request, params }) => {
   const taskCategories = await formData.getAll("taskCategories");
   const taskCategoriesOriginal = await formData.getAll("taskCategoriesCopy");
 
-  const { title, notes, fromDate, toDate, done, incomplete } =
+  const { title, notes, toDate, done, incomplete, priority } =
     await getCommonFormData(formData, [
       "title",
       "notes",
       "taskId",
-      "fromDate",
       "toDate",
       "done",
       "incomplete",
+      "priority",
     ]);
-
-  console.log(toDate);
 
   if (newCategories.length) {
     for (let index = 0; index < newCategories.length; index++) {
@@ -87,21 +85,19 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
   }
 
+  console.log(toDate ? endOfWeek(new Date(toDate)).toISOString() : "");
+
   const payload: Partial<Task> = {
     id: params.id,
     userId,
     title,
     notes,
+    priority,
     incomplete: incomplete === "on" ? true : false,
+    toDate: toDate ? endOfWeek(new Date(toDate)).toISOString() : null,
+
     done,
-    fromDate: fromDate && startOfWeek(new Date(fromDate)).toISOString(),
   };
-
-  if (toDate) {
-    console.log("toDate: ", toDate);
-
-    payload.toDate = endOfWeek(new Date(toDate)).toISOString();
-  }
 
   await updateTask({ ...payload });
 
@@ -171,7 +167,7 @@ const TaskEdit = () => {
               <RepeatOptions
                 toDate={newTask.toDate}
                 setToDate={(val: Date) =>
-                  setNewTask({ ...newTask, toDate: val })
+                  setNewTask({ ...newTask, toDate: val || "" })
                 }
               />
               <CategoriesSelector
@@ -182,7 +178,10 @@ const TaskEdit = () => {
             </div>
 
             <div className="flex gap-4">
-              <TaskPriorityPicker />
+              <TaskPriorityPicker
+                currentPriority={newTask.priority}
+                setPriority={(val) => setNewTask({ ...newTask, priority: val })}
+              />
             </div>
           </div>
           <div className="flex flex-col">
@@ -257,6 +256,13 @@ const TaskEdit = () => {
             readOnly
             value={newTask.toDate}
             name="toDate"
+          />
+          <input
+            type="text"
+            hidden
+            readOnly
+            value={newTask.priority}
+            name="priority"
           />
         </Form>
       </Main>
