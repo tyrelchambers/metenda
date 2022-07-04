@@ -31,7 +31,7 @@ const CategoryPill = ({
 }: CategoryPillProps) => {
   return (
     <p
-      className={`w-fit rounded-full px-4 py-1 ${sizes[size]} ${
+      className={`w-fit rounded-full  px-4 py-1 ${sizes[size]} ${
         isActive && isActiveClass
       }`}
       style={{

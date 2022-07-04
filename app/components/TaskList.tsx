@@ -1,5 +1,6 @@
 import CategoryPill, { CategoryPillSize } from "./CategoryPill";
 import { Link, useFetcher } from "@remix-run/react";
+import { faClock, faTag } from "@fortawesome/free-solid-svg-icons";
 import { format, parseISO } from "date-fns";
 
 import CheckBox from "./CheckBox";
@@ -7,7 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Task } from "@prisma/client";
 import TaskListItemActions from "./TaskListItemActions";
 import TaskStatus from "./TaskStatus";
-import { faClock } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip } from "@mantine/core";
+import { faFolder } from "@fortawesome/free-regular-svg-icons";
 import { priorities } from "~/constants";
 import { taskStatus } from "~/utils";
 
@@ -62,14 +64,6 @@ const TaskList = ({
             </p>
           </span>
         </div>
-        <ul className="flex gap-2">
-          {task.categories.length > 0 &&
-            task.categories.map((c) => (
-              <li key={c.id}>
-                <CategoryPill data={c.category} size={CategoryPillSize.SMALL} />
-              </li>
-            ))}
-        </ul>
       </div>
 
       <TaskListItemActions task={task} redirectTo={redirectTo} />
