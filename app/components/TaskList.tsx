@@ -1,6 +1,5 @@
 import CategoryPill, { CategoryPillSize } from "./CategoryPill";
 import { Link, useFetcher } from "@remix-run/react";
-import { faClock, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { format, parseISO } from "date-fns";
 
 import CheckBox from "./CheckBox";
@@ -8,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Task } from "@prisma/client";
 import TaskListItemActions from "./TaskListItemActions";
 import TaskStatus from "./TaskStatus";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
+import { priorities } from "~/constants";
 import { taskStatus } from "~/utils";
 
 const TaskList = ({
@@ -48,7 +49,8 @@ const TaskList = ({
           </Link>
           <TaskStatus status={taskStatus(task)} />
         </div>
-        <div className="flex rounded-lg py-2">
+        <div className="my-2 flex gap-4">
+          {priorities[task.priority].icon}
           <span className="flex gap-2">
             <FontAwesomeIcon
               icon={faClock}

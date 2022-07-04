@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { faCheck, faFlag } from "@fortawesome/free-solid-svg-icons";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { RadioGroup } from "@headlessui/react";
+import React from "react";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { priorities } from "~/constants";
 
 export enum Priority {
   PRIORITY1 = "priority1",
@@ -11,62 +11,19 @@ export enum Priority {
   PRIORITY4 = "priority4",
 }
 
-const priorities: { label: string; value: string; icon: React.ReactElement }[] =
-  [
-    {
-      label: "Priority 1",
-      value: Priority.PRIORITY1,
-      icon: (
-        <FontAwesomeIcon
-          icon={faFlag}
-          className="text-red-500"
-          style={{ width: "12px" }}
-        />
-      ),
-    },
-    {
-      label: "Priority 2",
-      value: Priority.PRIORITY2,
-      icon: (
-        <FontAwesomeIcon
-          icon={faFlag}
-          className="text-orange-500"
-          style={{ width: "12px" }}
-        />
-      ),
-    },
-    {
-      label: "Priority 3",
-      value: Priority.PRIORITY3,
-      icon: (
-        <FontAwesomeIcon
-          icon={faFlag}
-          className="text-green-500"
-          style={{ width: "12px" }}
-        />
-      ),
-    },
-    {
-      label: "Priority 4",
-      value: Priority.PRIORITY4,
-      icon: (
-        <FontAwesomeIcon
-          icon={faFlag}
-          className="text-gray-500"
-          style={{ width: "12px" }}
-        />
-      ),
-    },
-  ];
+interface Props {
+  currentPriority: string;
+  setPriority: (priority: string) => void;
+}
 
-const PriorityList = ({ currentPriority, setPriority }) => {
+const PriorityList = ({ currentPriority, setPriority }: Props) => {
   return (
     <RadioGroup
       value={currentPriority}
       onChange={setPriority}
       className="flex flex-col gap-4"
     >
-      {priorities.map((p) => (
+      {Object.values(priorities).map((p) => (
         <RadioGroup.Option key={p.value} value={p.value} className="w-full">
           {({ checked }) => (
             <div

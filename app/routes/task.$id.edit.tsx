@@ -167,7 +167,7 @@ const TaskEdit = () => {
               <RepeatOptions
                 toDate={newTask.toDate}
                 setToDate={(val: Date) =>
-                  setNewTask({ ...newTask, toDate: val })
+                  setNewTask({ ...newTask, toDate: val || "" })
                 }
               />
               <CategoriesSelector
