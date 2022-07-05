@@ -13,10 +13,10 @@ FROM base as deps
 WORKDIR /myapp
 
 RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN 
-CMD [ "cat", "/run/secrets/FONTAWESOME_NPM_AUTH_TOKEN" ] 
 
 ADD package.json package-lock.json ./
-RUN FONTAWESOME_NPM_AUTH_TOKEN=${FONTAWESOME_NPM_AUTH_TOKEN} npm install --production=false
+RUN --mount=type=secret,id=my_env source /run/secrets/my_env \
+  && FONTAWESOME_NPM_AUTH_TOKEN=${FONTAWESOME_NPM_AUTH_TOKEN} npm install --production=false
 
 # Setup production node_modules
 FROM base as production-deps
