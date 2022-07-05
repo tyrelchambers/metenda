@@ -15,8 +15,8 @@ WORKDIR /myapp
 RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN 
 
 ADD package.json package-lock.json ./
-RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN \
-FONTAWESOME_NPM_AUTH_TOKEN=${FONTAWESOME_NPM_AUTH_TOKEN} npm install --production=false
+
+RUN FONTAWESOME_NPM_AUTH_TOKEN=F1348F1C-996E-42A3-891E-33AB0188B6F0 npm install --production=false
 
 # Setup production node_modules
 FROM base as production-deps
