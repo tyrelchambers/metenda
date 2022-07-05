@@ -12,7 +12,7 @@ FROM base as deps
 
 WORKDIR /myapp
 
-ARG FONTAWESOME_NPM_AUTH_TOKEN
+RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN
 
 ADD package.json package-lock.json ./
 RUN FONTAWESOME_NPM_AUTH_TOKEN=${FONTAWESOME_NPM_AUTH_TOKEN} npm install --production=false
