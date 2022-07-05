@@ -13,7 +13,7 @@ FROM base as deps
 WORKDIR /myapp
 
 ADD package.json package-lock.json ./
-RUN npm install --production=false
+RUN FONTAWESOME_NPM_AUTH_TOKEN=${FONTAWESOME_NPM_AUTH_TOKEN} npm install --production=false
 
 # Setup production node_modules
 FROM base as production-deps
