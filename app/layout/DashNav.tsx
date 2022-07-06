@@ -55,23 +55,23 @@ const DashNav = () => {
           to={link.to}
           className={({ isActive }) =>
             isActive
-              ? "flex items-center gap-6  text-white"
-              : "flex items-center gap-6  text-gray-400 transition-all hover:text-white"
+              ? "flex items-center gap-6  text-indigo-500"
+              : "flex items-center gap-6  text-gray-600 transition-all hover:text-gray-800"
           }
         >
           <FontAwesomeIcon icon={link.icon} style={{ width: "17px" }} />
           {link.label}
         </NavLink>
       ))}
-      <hr className=" border-gray-600" />
+      <hr className=" border-gray-300" />
       {linkGroup2.map((link) => (
         <NavLink
           key={link.label}
           to={link.to}
           className={({ isActive }) =>
             isActive
-              ? "flex items-center gap-6  text-white"
-              : "flex items-center gap-6  text-gray-400 transition-all hover:text-white"
+              ? "flex items-center gap-6  text-indigo-500"
+              : "flex items-center gap-6  text-gray-600 transition-all hover:text-gray-800"
           }
         >
           <FontAwesomeIcon icon={link.icon} style={{ width: "17px" }} />

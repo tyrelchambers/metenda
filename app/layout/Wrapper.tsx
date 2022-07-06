@@ -7,9 +7,9 @@ interface IWrapperProps {
 
 const Wrapper = ({ children }: IWrapperProps) => {
   return (
-    <div className="wrapper flex w-full gap-10 bg-gray-100 p-4">
+    <div className="wrapper flex w-full  bg-gray-100">
       <DashHeader />
-      {children}
+      <div className="w-full p-6">{children}</div>
     </div>
   );
 };

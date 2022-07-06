@@ -1,8 +1,6 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { currentDay, getCommonFormData } from "~/utils";
-import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
-import { format, isAfter, isBefore, isEqual, startOfDay } from "date-fns";
 import {
   getAllTasks,
   totalCompletedTasksCount,
@@ -11,21 +9,20 @@ import {
 } from "~/models/task.server";
 
 import { Button } from "~/components/Button";
-import Calendar from "react-calendar";
 import { Category } from "@prisma/client";
 import CategoryPill from "~/components/CategoryPill";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Month } from "@mantine/dates";
 import TaskList from "~/components/TaskList";
 import Wrapper from "~/layout/Wrapper";
+import { format } from "date-fns";
 import { getAllCategories } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
 import { useCurrentWeek } from "~/hooks/useCurrentWeek";
+import { useEffect } from "react";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  const url = new URL(request.url);
-  const startOfWeek = url.searchParams.get("startOfWeek");
-  const endOfWeek = url.searchParams.get("endOfWeek");
+
   const totalTasks = await totalTasksCount({ userId });
   const completedTasks = await totalCompletedTasksCount({
     userId,
@@ -34,8 +31,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const tasks = await getAllTasks({
     userId,
-    after: startOfWeek,
-    before: endOfWeek,
+    // after: startOfWeek,
+    // before: endOfWeek,
   });
 
   const categories = await getAllCategories({ userId });
@@ -71,9 +68,17 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const Agenda = () => {
-  const { tasks, categories } = useLoaderData();
+  const { categories } = useLoaderData();
   const { startOfWeek, endOfWeek, nextWeek, previousWeek } =
     useCurrentWeek(currentDay);
+  const fetcher = useFetcher();
+  const tasks = fetcher?.data || [];
+
+  useEffect(() => {
+    fetcher.load(
+      `/tasksByWeek?startOfWeek=${startOfWeek.toISOString()}&endOfWeek=${endOfWeek.toISOString()}`
+    );
+  }, [startOfWeek, endOfWeek]);
 
   const nextWeekHandler = () => {
     nextWeek();
@@ -86,7 +91,7 @@ const Agenda = () => {
   return (
     <Wrapper>
       <main className=" w-full">
-        <section className="mt-6 grid grid-cols-12 gap-10">
+        <section className="grid grid-cols-12 gap-10">
           <div className="col-span-8 flex flex-col ">
             <div className="mt-4 mb-8 flex justify-between">
               <div className="flex flex-col">
@@ -112,7 +117,7 @@ const Agenda = () => {
             </div>
 
             <div className="flex flex-col">
-              <ul className=" w-full overflow-auto rounded-3xl bg-white p-6 shadow-lg">
+              <ul className=" w-full overflow-auto rounded-3xl bg-white p-6 ">
                 {tasks.length === 0 && (
                   <li className="italic text-gray-500">
                     No tasks to show for this week
@@ -131,47 +136,45 @@ const Agenda = () => {
             </div>
           </div>
           <div className="sticky top-0 col-span-4 flex flex-col gap-6">
-            <section className="rounded-3xl bg-gray-800 p-4 shadow-lg">
-              <Calendar
-                formatShortWeekday={(locale, date) => format(date, "eeeee")}
-                prev2Label={null}
-                next2Label={null}
-                prevLabel={
-                  <FontAwesomeIcon
-                    icon={faCaretLeft}
-                    style={{ width: "8px" }}
-                  />
-                }
-                nextLabel={
-                  <FontAwesomeIcon
-                    icon={faCaretRight}
-                    style={{ width: "8px" }}
-                  />
-                }
-                calendarType="US"
-                tileClassName={({ date }) => {
-                  let className = "p-2 text-white";
-
-                  if (isEqual(date, startOfWeek)) {
-                    className += " bg-yellow-300 rounded-l-lg !text-gray-800";
-                  }
-                  if (isEqual(date, startOfDay(endOfWeek))) {
-                    className += " bg-yellow-300  rounded-r-lg !text-gray-800";
+            <section className="rounded-3xl bg-gray-800 p-4 ">
+              <p className="mb-2 py-2 text-center font-medium text-white">
+                {format(startOfWeek, "MMMM") !== format(endOfWeek, "MMMM")
+                  ? `${format(startOfWeek, "MMMM")} - ${format(
+                      endOfWeek,
+                      "MMMM"
+                    )}`
+                  : format(startOfWeek, "MMMM")}
+              </p>
+              <Month
+                month={startOfWeek}
+                range={[startOfWeek, endOfWeek]}
+                firstDayOfWeek="sunday"
+                className="w-full"
+                dayStyle={(day, { inRange, weekend, outside }) => {
+                  const styles = {};
+                  if (inRange) {
+                    styles.backgroundColor = "rgb(253 224 71)";
+                    styles.color = "rgb(51 65 85)";
+                  } else {
+                    styles.color = "rgb(226 232 240)";
                   }
 
-                  if (
-                    isAfter(date, startOfWeek) &&
-                    isBefore(date, startOfDay(endOfWeek))
-                  ) {
-                    className += " bg-yellow-300 !text-gray-800";
+                  if (weekend && !inRange) {
+                    styles.color = "rgb(226 232 240)";
                   }
 
-                  return className;
+                  if (outside) {
+                    styles.opacity = "0.4";
+                  }
+
+                  return {
+                    ...styles,
+                    width: "100%",
+                  };
                 }}
-                selectRange={true}
               />
             </section>
-            <section className="rounded-3xl bg-white p-4 shadow-lg">
+            <section className="rounded-3xl bg-white p-4 ">
               <h2 className=" font-bold text-gray-800">Categories</h2>
 
               <ul className="mt-4 flex flex-wrap gap-2">
