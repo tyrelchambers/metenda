@@ -2,6 +2,10 @@ import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
 import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { currentDay, getCommonFormData } from "~/utils";
 import {
+  faCaretCircleLeft,
+  faCaretCircleRight,
+} from "@fortawesome/pro-light-svg-icons";
+import {
   getAllTasks,
   totalCompletedTasksCount,
   totalTasksCount,
@@ -11,6 +15,7 @@ import {
 import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
 import CategoryPill from "~/components/CategoryPill";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Month } from "@mantine/dates";
 import TaskList from "~/components/TaskList";
 import Wrapper from "~/layout/Wrapper";
@@ -93,9 +98,8 @@ const Agenda = () => {
       <main className=" w-full">
         <section className="grid grid-cols-12 gap-10">
           <div className="col-span-8 flex flex-col ">
-            <div className="mt-4 mb-8 flex justify-between">
+            <div className=" mb-6 flex flex-col">
               <div className="flex flex-col">
-                <p className="text-indigo-600">Viewing the week of:</p>
                 <p className="mt-2 text-3xl">
                   <span className=" font-bold text-gray-800">
                     {format(startOfWeek, "MMMM do")}
@@ -106,13 +110,32 @@ const Agenda = () => {
                   </span>
                 </p>
               </div>
-              <div className="mt-4 flex items-center gap-4">
-                <Button onClick={previousWeekHandler} className="w-24">
-                  Previous
-                </Button>
-                <Button onClick={nextWeekHandler} className="w-24">
+              <div className="mt-4 flex items-center gap-6">
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-sm text-indigo-500"
+                  onClick={previousWeekHandler}
+                >
+                  <FontAwesomeIcon
+                    icon={faCaretCircleLeft}
+                    className="text-indigo-500 transition-all"
+                    style={{ width: "22px" }}
+                  />
+                  Prev
+                </button>
+
+                <button
+                  type="button"
+                  onClick={nextWeekHandler}
+                  className="flex items-center gap-1 text-sm text-indigo-500"
+                >
+                  <FontAwesomeIcon
+                    icon={faCaretCircleRight}
+                    className=" transition-all"
+                    style={{ width: "22px" }}
+                  />
                   Next
-                </Button>
+                </button>
               </div>
             </div>
 
@@ -159,12 +182,8 @@ const Agenda = () => {
                     styles.color = "rgb(226 232 240)";
                   }
 
-                  if (weekend && !inRange) {
+                  if (weekend && !inRange && !outside) {
                     styles.color = "rgb(226 232 240)";
-                  }
-
-                  if (outside) {
-                    styles.opacity = "0.4";
                   }
 
                   return {

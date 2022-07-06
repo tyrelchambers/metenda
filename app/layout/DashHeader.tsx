@@ -23,7 +23,7 @@ const DashHeader = () => {
             target={
               <button
                 onClick={() => setOpened((o) => !o)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-gray-400 p-2 text-gray-600 transition-all hover:border-indigo-500 hover:bg-indigo-500 hover:text-white"
+                className="flex h-10 w-10 items-center justify-center rounded-full border-[1px] border-gray-400 p-2 text-gray-600 transition-all hover:border-indigo-500 hover:bg-indigo-500 hover:text-white"
               >
                 <FontAwesomeIcon style={{ width: "10px" }} icon={faPlus} />
               </button>
