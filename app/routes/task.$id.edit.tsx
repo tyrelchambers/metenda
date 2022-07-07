@@ -8,9 +8,11 @@ import { Form, Link, useLoaderData } from "@remix-run/react";
 import {
   createCategoryOnTask,
   deleteCategoryOnTask,
+  deleteTask,
   getTaskById,
   updateTask,
 } from "~/models/task.server";
+import { deleteCategory, getAllCategories } from "~/models/category.server";
 import { endOfWeek, startOfWeek } from "date-fns";
 
 import CategoriesSelector from "~/components/CategoriesSelector";
@@ -27,7 +29,6 @@ import TaskPriorityPicker from "~/components/TaskPriorityPicker";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
 import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
-import { getAllCategories } from "~/models/category.server";
 import { getCommonFormData } from "~/utils";
 import { requireUserId } from "~/session.server";
 import { useTask } from "~/hooks/useTask";
@@ -44,9 +45,8 @@ export const action: ActionFunction = async ({ request, params }) => {
   const url = new URL(request.url);
   const userId = await requireUserId(request);
   const formData = await request.formData();
-  const redirectTo =
-    (await formData.get("redirectTo")) || url.searchParams.get("redirectTo");
-
+  const redirectTo = (await formData.get("redirectTo")) as string;
+  const _action = await formData.get("_action");
   const newCategories = await formData.getAll("newCategory");
   const taskCategories = await formData.getAll("taskCategories");
   const taskCategoriesOriginal = await formData.getAll("taskCategoriesCopy");
@@ -61,6 +61,23 @@ export const action: ActionFunction = async ({ request, params }) => {
       "incomplete",
       "priority",
     ]);
+  const payload: Partial<Task> = {
+    id: params.id,
+    userId,
+    title,
+    notes,
+    priority,
+    incomplete: incomplete == ("true" || "on") ? true : false,
+    toDate: toDate ? endOfWeek(new Date(toDate)).toISOString() : null,
+  };
+
+  if (_action === "check_done") {
+    payload.done = done === ("on" || "true") ? false : true;
+  }
+
+  if (_action === "delete") {
+    await deleteTask({ userId, id: params.id });
+  }
 
   if (newCategories.length) {
     for (let index = 0; index < newCategories.length; index++) {
@@ -71,8 +88,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       });
     }
   }
-
-  console.log(incomplete);
 
   const categoriesToDelete = taskCategoriesOriginal.filter(
     (category) => !taskCategories.includes(category)
@@ -88,19 +103,6 @@ export const action: ActionFunction = async ({ request, params }) => {
       });
     }
   }
-
-  const payload: Partial<Task> = {
-    id: params.id,
-    userId,
-    title,
-    notes,
-    priority,
-    incomplete: incomplete == ("true" || "on") ? true : false,
-    toDate: toDate ? endOfWeek(new Date(toDate)).toISOString() : null,
-
-    done,
-  };
-  console.log(payload);
 
   await updateTask({ ...payload });
 

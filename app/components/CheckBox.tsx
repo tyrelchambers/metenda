@@ -4,25 +4,29 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 interface CheckBoxProps {
   name: string;
-  changeHandler: () => void;
   checked: boolean | null;
   label?: string;
+  value?: string;
+  inputValue: boolean;
+  inputName: string;
 }
 
 const CheckBox = ({
   name,
-  changeHandler,
   checked,
   label,
+  value,
+  inputValue,
+  inputName,
   ...rest
 }: CheckBoxProps) => {
   return (
-    <label htmlFor={name} onClick={changeHandler} className="mb-4">
+    <button className="mb-4" name={name} value={value}>
       <input
         type="checkbox"
-        name={name}
+        name={inputName}
         hidden
-        checked={checked}
+        checked={inputValue}
         {...rest}
         readOnly
       />
@@ -42,7 +46,7 @@ const CheckBox = ({
         </div>
         {label && <p className="text-sm font-thin text-gray-700">{label}</p>}
       </div>
-    </label>
+    </button>
   );
 };
 

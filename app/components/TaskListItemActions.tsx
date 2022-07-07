@@ -36,7 +36,11 @@ const TaskListItemActions = ({ task, redirectTo }: Props) => {
       opened={opened}
       onClose={() => setOpened(false)}
       target={
-        <button onClick={() => setOpened((o) => !o)} className="w-fit">
+        <button
+          onClick={() => setOpened((o) => !o)}
+          className="w-fit"
+          type="button"
+        >
           <FontAwesomeIcon icon={faEllipsis} className="text-2xl" />
         </button>
       }
@@ -46,7 +50,11 @@ const TaskListItemActions = ({ task, redirectTo }: Props) => {
       placement="end"
       className="flex h-8 w-8 items-center justify-center rounded-full transition-all hover:bg-gray-200"
     >
-      <div className="flex w-full flex-col gap-4">
+      <Form
+        action={`/task/${task.id}/edit`}
+        method="patch"
+        className="flex w-full flex-col gap-4"
+      >
         <Link
           to={`/task/${task.id}/edit`}
           className="w-full text-sm text-gray-500 transition-all  hover:text-indigo-500"
@@ -58,37 +66,33 @@ const TaskListItemActions = ({ task, redirectTo }: Props) => {
           />
           Edit
         </Link>
-        <fetcher.Form method="patch">
-          <button
-            className="flex w-full items-center justify-start text-sm text-gray-500 transition-all  hover:text-indigo-500"
-            type="button"
-            onClick={markAsIncomplete}
-          >
-            <FontAwesomeIcon icon={faTimes} className="mr-4" /> Set as
-            incomplete
-          </button>
-        </fetcher.Form>
-        <hr />
-        <Form
-          method="delete"
-          action={`/task/${task.id}/delete?redirectTo=${redirectTo}`}
+        <button
+          className="flex w-full items-center justify-start text-sm text-gray-500 transition-all  hover:text-indigo-500"
+          type="submit"
+          name="_action"
+          value="check_incomplete"
         >
-          <button
-            type="submit"
-            data-testid="delete-task"
-            className="flex w-full justify-start text-sm text-gray-500 transition-all hover:text-red-500"
-          >
-            <FontAwesomeIcon
-              icon={faTrash}
-              className="mr-4"
-              style={{ width: "13px" }}
-            />
-            Delete
-            <input type="hidden" name="id" value={task.id} />
-            <input type="hidden" name="redirectTo" value={redirectTo} />
-          </button>
-        </Form>
-      </div>
+          <FontAwesomeIcon icon={faTimes} className="mr-4" /> Set as incomplete
+          <input type="hidden" name="incomplete" value={!task.incomplete} />
+        </button>
+        <hr />
+        <button
+          type="submit"
+          data-testid="delete-task"
+          className="flex w-full justify-start text-sm text-gray-500 transition-all hover:text-red-500"
+          name="_action"
+          value="delete"
+        >
+          <FontAwesomeIcon
+            icon={faTrash}
+            className="mr-4"
+            style={{ width: "13px" }}
+          />
+          Delete
+          <input type="hidden" name="id" value={task.id} />
+          <input type="hidden" name="redirectTo" value={redirectTo} />
+        </button>
+      </Form>
     </Popover>
   );
 };

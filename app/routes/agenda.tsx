@@ -1,5 +1,5 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
-import { Link, useFetcher, useLoaderData } from "@remix-run/react";
+import { Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { currentDay, getCommonFormData } from "~/utils";
 import {
   faCaretCircleLeft,
@@ -12,7 +12,6 @@ import {
   updateTask,
 } from "~/models/task.server";
 
-import { Button } from "~/components/Button";
 import { Category } from "@prisma/client";
 import CategoryPill from "~/components/CategoryPill";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,7 +26,9 @@ import { useEffect } from "react";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-
+  const url = new URL(request.url);
+  const startOfWeek = url.searchParams.get("startOfWeek");
+  const endOfWeek = url.searchParams.get("endOfWeek");
   const totalTasks = await totalTasksCount({ userId });
   const completedTasks = await totalCompletedTasksCount({
     userId,
@@ -36,8 +37,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const tasks = await getAllTasks({
     userId,
-    // after: startOfWeek,
-    // before: endOfWeek,
+    after: startOfWeek,
+    before: endOfWeek,
   });
 
   const categories = await getAllCategories({ userId });
@@ -73,15 +74,14 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const Agenda = () => {
-  const { categories } = useLoaderData();
+  const { tasks, categories } = useLoaderData();
   const { startOfWeek, endOfWeek, nextWeek, previousWeek } =
     useCurrentWeek(currentDay);
-  const fetcher = useFetcher();
-  const tasks = fetcher?.data || [];
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetcher.load(
-      `/tasksByWeek?startOfWeek=${startOfWeek.toISOString()}&endOfWeek=${endOfWeek.toISOString()}`
+    navigate(
+      `?startOfWeek=${startOfWeek.toISOString()}&endOfWeek=${endOfWeek.toISOString()}`
     );
   }, [startOfWeek, endOfWeek]);
 
