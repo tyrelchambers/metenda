@@ -1,8 +1,9 @@
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, useFetcher } from "@remix-run/react";
 import React, { useState } from "react";
 import {
   faEllipsis,
   faPencil,
+  faTimes,
   faTrash,
 } from "@fortawesome/pro-light-svg-icons";
 
@@ -17,21 +18,33 @@ interface Props {
 
 const TaskListItemActions = ({ task, redirectTo }: Props) => {
   const [opened, setOpened] = useState<boolean>(false);
+  const fetcher = useFetcher();
+
+  const markAsIncomplete = () => {
+    fetcher.submit(
+      { id: task.id, incomplete: !task.incomplete, redirectTo: "/agenda" },
+      {
+        method: "patch",
+        action: `/task/${task.id}/edit`,
+      }
+    );
+    window.location.reload();
+  };
 
   return (
     <Popover
       opened={opened}
       onClose={() => setOpened(false)}
       target={
-        <button onClick={() => setOpened((o) => !o)}>
-          <FontAwesomeIcon icon={faEllipsis} />
+        <button onClick={() => setOpened((o) => !o)} className="w-fit">
+          <FontAwesomeIcon icon={faEllipsis} className="text-2xl" />
         </button>
       }
       width={260}
       position="bottom"
       withArrow
       placement="end"
-      className="flex h-6 w-6 justify-center rounded-sm transition-all hover:bg-gray-200"
+      className="flex h-8 w-8 items-center justify-center rounded-full transition-all hover:bg-gray-200"
     >
       <div className="flex w-full flex-col gap-4">
         <Link
@@ -45,6 +58,16 @@ const TaskListItemActions = ({ task, redirectTo }: Props) => {
           />
           Edit
         </Link>
+        <fetcher.Form method="patch">
+          <button
+            className="flex w-full items-center justify-start text-sm text-gray-500 transition-all  hover:text-indigo-500"
+            type="button"
+            onClick={markAsIncomplete}
+          >
+            <FontAwesomeIcon icon={faTimes} className="mr-4" /> Set as
+            incomplete
+          </button>
+        </fetcher.Form>
         <hr />
         <Form
           method="delete"

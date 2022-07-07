@@ -41,9 +41,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  const url = new URL(request.url);
   const userId = await requireUserId(request);
   const formData = await request.formData();
-  const redirectTo = (await formData.get("redirectTo")) as string;
+  const redirectTo =
+    (await formData.get("redirectTo")) || url.searchParams.get("redirectTo");
 
   const newCategories = await formData.getAll("newCategory");
   const taskCategories = await formData.getAll("taskCategories");
@@ -70,6 +72,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
   }
 
+  console.log(incomplete);
+
   const categoriesToDelete = taskCategoriesOriginal.filter(
     (category) => !taskCategories.includes(category)
   );
@@ -85,19 +89,18 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
   }
 
-  console.log(toDate ? endOfWeek(new Date(toDate)).toISOString() : "");
-
   const payload: Partial<Task> = {
     id: params.id,
     userId,
     title,
     notes,
     priority,
-    incomplete: incomplete === "on" ? true : false,
+    incomplete: incomplete == ("true" || "on") ? true : false,
     toDate: toDate ? endOfWeek(new Date(toDate)).toISOString() : null,
 
     done,
   };
+  console.log(payload);
 
   await updateTask({ ...payload });
 

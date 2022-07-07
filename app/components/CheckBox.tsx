@@ -5,7 +5,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 interface CheckBoxProps {
   name: string;
   changeHandler: () => void;
-  checked: boolean;
+  checked: boolean | null;
   label?: string;
 }
 
