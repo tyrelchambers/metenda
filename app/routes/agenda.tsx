@@ -1,9 +1,15 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
-import { Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
-import { currentDay, getCommonFormData } from "~/utils";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import {
+  buildFilterString,
+  currentDay,
+  filterTasks,
+  getCommonFormData,
+} from "~/utils";
 import {
   faCaretCircleLeft,
   faCaretCircleRight,
+  faSlidersUp,
 } from "@fortawesome/pro-light-svg-icons";
 import {
   getAllTasks,
@@ -14,6 +20,8 @@ import {
 
 import { Category } from "@prisma/client";
 import CategoryPill from "~/components/CategoryPill";
+import FilterString from "~/components/FilterString";
+import FilterTasks from "~/components/FilterTasks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Month } from "@mantine/dates";
 import TaskList from "~/components/TaskList";
@@ -23,6 +31,7 @@ import { getAllCategories } from "~/models/category.server";
 import { requireUserId } from "~/session.server";
 import { useCurrentWeek } from "~/hooks/useCurrentWeek";
 import { useEffect } from "react";
+import { useTaskFilter } from "~/hooks/useTaskFilter";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
@@ -78,6 +87,9 @@ const Agenda = () => {
   const { startOfWeek, endOfWeek, nextWeek, previousWeek } =
     useCurrentWeek(currentDay);
   const navigate = useNavigate();
+  const { filters, setFilter, resetFilters } = useTaskFilter();
+
+  const filteredTasks = filterTasks(tasks, filters);
 
   useEffect(() => {
     navigate(
@@ -140,9 +152,23 @@ const Agenda = () => {
             </div>
 
             <div className="flex flex-col">
-              <ul className=" w-full overflow-auto rounded-3xl bg-white p-6 ">
+              <div className=" flex w-full flex-col gap-4 overflow-auto rounded-3xl bg-white p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <p className="flex items-center text-gray-600">
+                      Filter tasks
+                    </p>
+                    <FilterString filters={filters} />
+                  </div>
+                  <FilterTasks
+                    categories={categories}
+                    setFilter={setFilter}
+                    resetFilters={resetFilters}
+                  />
+                </div>
+                <hr />
                 {tasks.length === 0 && (
-                  <li className="italic text-gray-500">
+                  <p className="italic text-gray-500">
                     No tasks to show for this week
                     <Link
                       to="/task/new"
@@ -150,12 +176,10 @@ const Agenda = () => {
                     >
                       Create task
                     </Link>
-                  </li>
+                  </p>
                 )}
-                {tasks.map((task) => (
-                  <TaskList task={task} key={task.id} redirectTo="/agenda" />
-                ))}
-              </ul>
+                <TaskList tasks={filteredTasks} redirectTo="/agenda" />
+              </div>
             </div>
           </div>
           <div className="sticky top-0 col-span-4 flex flex-col gap-6">

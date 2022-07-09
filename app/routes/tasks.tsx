@@ -23,11 +23,7 @@ const Tasks = () => {
     <Wrapper>
       <Main>
         <Heading type="h1">All of your weekly tasks</Heading>
-        <ul>
-          {tasks.map((task: Task) => (
-            <TaskList task={task} key={task.id} redirectTo="/tasks" />
-          ))}
-        </ul>
+        <TaskList tasks={tasks} key={task.id} redirectTo="/tasks" />
       </Main>
     </Wrapper>
   );

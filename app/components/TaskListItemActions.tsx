@@ -18,18 +18,6 @@ interface Props {
 
 const TaskListItemActions = ({ task, redirectTo }: Props) => {
   const [opened, setOpened] = useState<boolean>(false);
-  const fetcher = useFetcher();
-
-  const markAsIncomplete = () => {
-    fetcher.submit(
-      { id: task.id, incomplete: !task.incomplete, redirectTo: "/agenda" },
-      {
-        method: "patch",
-        action: `/task/${task.id}/edit`,
-      }
-    );
-    window.location.reload();
-  };
 
   return (
     <Popover

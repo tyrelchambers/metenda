@@ -1,7 +1,7 @@
-import { CommonFormData, TaskStatuses } from "./types";
+import { Category, Task } from "@prisma/client";
+import { CommonFormData, TaskFilters, TaskStatuses } from "./types";
 import { endOfWeek, startOfWeek } from "date-fns";
 
-import { Task } from "@prisma/client";
 import type { User } from "~/models/user.server";
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
@@ -119,4 +119,27 @@ export const taskStatus = (task: Task): TaskStatuses => {
     return TaskStatuses.INCOMPLETE;
   }
   return TaskStatuses.IN_PROGRESS;
+};
+
+const fitlerTasksByCategory = (
+  tasks: Task[],
+  category: Category | undefined
+) => {
+  if (!category) return tasks;
+  const filtered = [];
+
+  for (let index = 0; index < tasks.length; index++) {
+    const element = tasks[index];
+    if (element.categories.find((cat) => cat.category.id === category.id)) {
+      filtered.push(element);
+    }
+  }
+
+  return filtered;
+};
+
+export const filterTasks = (tasks: Task[], filters: TaskFilters) => {
+  let _tasks = fitlerTasksByCategory(tasks, filters?.category);
+
+  return _tasks;
 };
