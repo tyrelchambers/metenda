@@ -16,7 +16,12 @@ RUN --mount=type=secret,id=FONTAWESOME_NPM_AUTH_TOKEN
 
 ADD package.json package-lock.json ./
 
-RUN FONTAWESOME_NPM_AUTH_TOKEN=F1348F1C-996E-42A3-891E-33AB0188B6F0 npm install --production=false
+ARG FONTAWESOME_NPM_AUTH_TOKEN  
+COPY .npmrc .npmrc  
+
+RUN npm install --production=false
+
+RUN rm -f .npmrc
 
 # Setup production node_modules
 FROM base as production-deps
