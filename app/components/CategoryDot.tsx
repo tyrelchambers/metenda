@@ -9,8 +9,6 @@ const CategoryDot = ({
   color: Category["color"];
   title: Category["title"];
 }) => {
-  console.log(color);
-
   return (
     <Tooltip
       label={title}
