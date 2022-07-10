@@ -12,5 +12,11 @@ export const useTaskFilter = () => {
     setFilters({});
   };
 
-  return { filters, setFilter, resetFilters };
+  const removeFilter = (filter: keyof TaskFilters) => {
+    const clone = { ...filters };
+    delete clone[filter];
+    setFilters(clone);
+  };
+
+  return { filters, setFilter, resetFilters, removeFilter };
 };

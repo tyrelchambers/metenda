@@ -138,8 +138,25 @@ const fitlerTasksByCategory = (
   return filtered;
 };
 
+const filterTasksByStatus = (tasks: Task[], status: TaskStatuses) => {
+  if (!status) return tasks;
+
+  const filtered = [];
+
+  for (let index = 0; index < tasks.length; index++) {
+    const element = tasks[index];
+    if (taskStatus(element) === TaskStatuses[status]) {
+      filtered.push(element);
+    }
+  }
+
+  return filtered;
+};
+
 export const filterTasks = (tasks: Task[], filters: TaskFilters) => {
   let _tasks = fitlerTasksByCategory(tasks, filters?.category);
+
+  _tasks = filterTasksByStatus(_tasks, filters?.status);
 
   return _tasks;
 };

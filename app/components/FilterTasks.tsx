@@ -42,7 +42,7 @@ const FilterTasks = ({
           <p className="font-bold text-gray-800">Filter</p>
           <button
             className="text-sm text-indigo-500"
-            onClick={() => resetFilters()}
+            onClick={() => resetFilters?.()}
           >
             Reset
           </button>

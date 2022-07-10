@@ -87,7 +87,7 @@ const Agenda = () => {
   const { startOfWeek, endOfWeek, nextWeek, previousWeek } =
     useCurrentWeek(currentDay);
   const navigate = useNavigate();
-  const { filters, setFilter, resetFilters } = useTaskFilter();
+  const { filters, setFilter, resetFilters, removeFilter } = useTaskFilter();
 
   const filteredTasks = filterTasks(tasks, filters);
 
@@ -158,7 +158,10 @@ const Agenda = () => {
                     <p className="flex items-center text-gray-600">
                       Filter tasks
                     </p>
-                    <FilterString filters={filters} />
+                    <FilterString
+                      filters={filters}
+                      removeFilter={removeFilter}
+                    />
                   </div>
                   <FilterTasks
                     categories={categories}
