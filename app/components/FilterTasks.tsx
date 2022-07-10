@@ -25,12 +25,16 @@ const FilterTasks = ({
         opened={opened}
         onClose={() => setOpened(false)}
         target={
-          <button onClick={() => setOpened((o) => !o)}>
+          <button
+            className="flex items-center gap-2 text-sm text-indigo-500"
+            onClick={() => setOpened((o) => !o)}
+          >
             <FontAwesomeIcon
               icon={faSlidersUp}
               style={{ width: "16px" }}
               className="text-indigo-500"
             />
+            Filters
           </button>
         }
         width={260}
