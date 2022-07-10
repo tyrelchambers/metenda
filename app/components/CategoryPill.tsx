@@ -14,6 +14,7 @@ interface CategoryPillProps {
   onClick?: () => void;
   size?: CategoryPillSize;
   title?: string;
+  className?: string;
 }
 
 const sizes = {
@@ -28,12 +29,13 @@ const CategoryPill = ({
   isActiveClass,
   onClick,
   size = CategoryPillSize.SMALL,
+  className,
 }: CategoryPillProps) => {
   return (
     <p
-      className={`w-fit rounded-full  px-4 py-1 ${sizes[size]} ${
+      className={`w-fit rounded-full px-4 py-1 ${sizes[size]} ${
         isActive && isActiveClass
-      }`}
+      } ${className ? className : ""}`}
       style={{
         border: `1.5px solid ${data.color}`,
         backgroundColor: `${data.color}33`,

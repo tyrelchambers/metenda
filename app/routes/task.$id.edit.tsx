@@ -4,6 +4,7 @@ import {
   redirect,
 } from "@remix-run/server-runtime";
 import { Button, SecondaryButtonStyles } from "~/components/Button";
+import { Category, Task } from "@prisma/client";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import {
   createCategoryOnTask,
@@ -24,7 +25,6 @@ import Label from "~/components/Label";
 import LabelSubtitle from "~/components/LabelSubtitle";
 import Main from "~/layout/Main";
 import RepeatOptions from "~/components/RepeatOptions";
-import { Task } from "@prisma/client";
 import TaskPriorityPicker from "~/components/TaskPriorityPicker";
 import Textarea from "~/components/Textarea";
 import Wrapper from "~/layout/Wrapper";
@@ -180,6 +180,15 @@ const TaskEdit = () => {
                 categoriesHandler={categoriesHandler}
                 selectedCategories={selectedCategories}
               />
+              {selectedCategories?.map((cat: Category) => (
+                <input
+                  type="hidden"
+                  name="newCategory"
+                  value={cat}
+                  readOnly
+                  key={cat}
+                />
+              ))}
             </div>
 
             <div className="flex gap-4">

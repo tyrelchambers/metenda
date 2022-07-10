@@ -11,10 +11,13 @@ export interface CommonFormData extends Partial<Task & Category> {
   willRepeatEveryWeek: boolean;
 }
 
-export type TaskStatusProps = TaskStatuses;
-
 export enum TaskStatuses {
   DONE = "done",
-  IN_PROGRESS = "inProgress",
+  IN_PROGRESS = "in progress",
   INCOMPLETE = "incomplete",
+}
+
+export interface TaskFilters {
+  category: Category | undefined;
+  status: TaskStatuses | undefined;
 }

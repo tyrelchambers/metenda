@@ -1,4 +1,3 @@
-import { TaskStatusProps, TaskStatuses } from "~/types";
 import {
   faCheckCircle,
   faClock,
@@ -7,13 +6,14 @@ import {
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { TaskStatuses } from "~/types";
 
 const pillClasses = "flex items-center rounded-full py-1 px-3 text-xs";
 
 const TaskStatus = ({
   status = TaskStatuses.IN_PROGRESS,
 }: {
-  status: TaskStatusProps;
+  status: TaskStatuses;
 }) => {
   if (status === TaskStatuses.DONE) {
     return (
