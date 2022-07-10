@@ -9,6 +9,7 @@ import TaskStatus from "./TaskStatus";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { priorities } from "~/constants";
 import { taskStatus } from "~/utils";
+import CategoryDot from "./CategoryDot";
 
 const TaskList = ({
   tasks,
@@ -47,6 +48,15 @@ const TaskList = ({
                   {task.title}
                 </Link>
                 <TaskStatus status={taskStatus(task)} />
+                <div className="flex items-center gap-1">
+                  {task.categories.map((c, i) => (
+                    <CategoryDot
+                      key={i}
+                      color={c.category.color}
+                      title={c.category.title}
+                    />
+                  ))}
+                </div>
               </div>
               <div className="my-2 flex gap-4">
                 {priorities[task.priority].icon}

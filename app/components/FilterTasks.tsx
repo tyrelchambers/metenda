@@ -17,7 +17,7 @@ const FilterTasks = ({
   setFilter: (f: TaskFilters) => void;
   resetFilters?: () => void;
 }) => {
-  const [opened, setOpened] = useState(true);
+  const [opened, setOpened] = useState(false);
 
   return (
     <div>
@@ -26,14 +26,12 @@ const FilterTasks = ({
         onClose={() => setOpened(false)}
         target={
           <button
-            className="flex items-center gap-2 text-sm text-indigo-500"
+            className={`flex items-center gap-2 rounded-full py-1 px-3 text-sm transition-all ${
+              opened ? "bg-indigo-500 text-white" : "text-indigo-500"
+            }`}
             onClick={() => setOpened((o) => !o)}
           >
-            <FontAwesomeIcon
-              icon={faSlidersUp}
-              style={{ width: "16px" }}
-              className="text-indigo-500"
-            />
+            <FontAwesomeIcon icon={faSlidersUp} style={{ width: "16px" }} />
             Filters
           </button>
         }

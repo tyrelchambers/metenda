@@ -1,10 +1,8 @@
-import { ActionFunction, LoaderFunction } from "@remix-run/server-runtime";
-import { deleteTask, getAllTasks, updateTask } from "~/models/task.server";
+import { LoaderFunction } from "@remix-run/server-runtime";
+import { getAllTasks } from "~/models/task.server";
 
 import { Heading } from "~/components/Heading";
 import Main from "~/layout/Main";
-import React from "react";
-import { Task } from "@prisma/client";
 import TaskList from "~/components/TaskList";
 import Wrapper from "~/layout/Wrapper";
 import { requireUserId } from "~/session.server";
@@ -23,7 +21,7 @@ const Tasks = () => {
     <Wrapper>
       <Main>
         <Heading type="h1">All of your weekly tasks</Heading>
-        <TaskList tasks={tasks} key={task.id} redirectTo="/tasks" />
+        <TaskList tasks={tasks} redirectTo="/tasks" />
       </Main>
     </Wrapper>
   );

@@ -220,22 +220,6 @@ const Agenda = () => {
                 }}
               />
             </section>
-            <section className="rounded-3xl bg-white p-4 ">
-              <h2 className=" font-bold text-gray-800">Categories</h2>
-
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {categories.length === 0 && (
-                  <p className="text-sm italic text-gray-500">
-                    No categories have been created
-                  </p>
-                )}
-                {categories.map((cat: Category) => (
-                  <li key={cat.id}>
-                    <CategoryPill data={cat} />
-                  </li>
-                ))}
-              </ul>
-            </section>
           </div>
         </section>
       </main>
